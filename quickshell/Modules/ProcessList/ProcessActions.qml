@@ -173,7 +173,7 @@ Singleton {
                 Proc.runCommand(null, ["pkexec", "sh", "-c", systemRestartScript, "sh", pid, detail?.unit ?? ""], (output, exitCode) => {
                     if (exitCode === 4)
                         failed(process, I18n.tr("Only the main process of a system service can be restarted.", "toast body when restarting another user's process"));
-                    else if (exitCode !== 0)
+                    else if (exitCode !== 0 && exitCode !== 126)
                         failed(process, "");
                 }, 0, 60000);
             });

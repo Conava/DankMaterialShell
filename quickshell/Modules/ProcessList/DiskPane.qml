@@ -62,7 +62,7 @@ DevicePane {
     rightStats: [
         {
             label: I18n.tr("Temperature"),
-            value: root.drive?.temperature != null ? SysmonDevices.formatTemp(root.drive.temperature, SettingsData.useFahrenheit) : null
+            value: root.drive?.temperature != null ? SysmonDevices.formatTemp(root.drive.temperature) : null
         },
         {
             label: I18n.tr("Health"),

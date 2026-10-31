@@ -25,11 +25,6 @@ Item {
     }
 
     Ref {
-        service: DriveService
-        active: root.visible
-    }
-
-    Ref {
         service: TailscaleService
         active: root.visible
     }
@@ -185,7 +180,7 @@ Item {
             "gpu": I18n.tr("GPU"),
             "memory": I18n.tr("Memory")
         })
-    readonly property var sensorRows: SystemInfo.sensorRows(DgopService.sensors, DriveService.drives, DgopService.availableGpus, sensorNames, SettingsData.useFahrenheit)
+    readonly property var sensorRows: SystemInfo.sensorRows(DgopService.sensors, DriveService.drives, DgopService.availableGpus, sensorNames)
     readonly property int sensorSplit: Math.ceil(sensorRows.length / 2)
 
     readonly property var sections: [

@@ -89,6 +89,12 @@ DFloatingWindow {
         active: processListModal.visible
     }
 
+    // Held for the whole window, so drive cards survive tab switches and the SMART report is not read again.
+    Ref {
+        service: DriveService
+        active: processListModal.visible
+    }
+
     onClosed: hide()
 
     onCurrentTabChanged: {
@@ -322,6 +328,7 @@ DFloatingWindow {
                             active: processListModal.visible
                             visible: currentTab === 0
                             sourceComponent: ProcessesView {
+                                fullList: true
                                 searchText: processListModal.searchText
                                 expandedPid: processListModal.expandedPid
                                 contextMenu: processContextMenu

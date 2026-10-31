@@ -16,6 +16,8 @@ DFlickable {
     property string subtitle: ""
     property string subtitle2: ""
     property bool showChart: true
+    // Content that replaces the chart matches this, so the stats below do not move when switching.
+    readonly property real chartCardHeight: chartCard.implicitHeight
     property string chartLabel: ""
     property string chartValue: ""
     property string chartSecondaryLabel: ""
@@ -41,9 +43,9 @@ DFlickable {
 
     function present(list, advanced) {
         return (list ?? []).filter(s => s && (s.advanced === true) === advanced && (!loaded || hasValue(s) || seenLabels[s.label])).map(s => hasValue(s) ? s : Object.assign({}, s, {
-                    value: "—",
-                    loading: !loaded
-                }));
+                value: "—",
+                loading: !loaded
+            }));
     }
 
     function rememberLabels() {
@@ -139,6 +141,7 @@ DFlickable {
         }
 
         ChartCard {
+            id: chartCard
             visible: root.showChart
             width: parent.width
             chartHeight: Theme.listItemHeight * 4

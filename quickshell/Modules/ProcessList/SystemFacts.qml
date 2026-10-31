@@ -42,7 +42,7 @@ p mesa "$mesa"
 icd=$(ls /usr/share/vulkan/icd.d/*.json /etc/vulkan/icd.d/*.json 2>/dev/null)
 if [ -n "$icd" ]; then
   p vk.api "$(cat $icd | grep -o '"api_version" *: *"[^"]*"' | sed 's/.*: *"//;s/"//' | sort -V | tail -n1)"
-  p vk.driver "$(cat $icd | grep -o '"library_path" *: *"[^"]*"' | sed 's/"$//;s/.*[/"]//;s/^lib\\(vulkan\\|GLX\\)_//;s/\\.so.*//;s/^radeon$/radv/;s/^intel$/anv/;s/^intel_hasvk$/hasvk/;s/^nouveau$/nvk/' | grep -v '^lvp' | sort -u | paste -sd, - | sed 's/,/, /g')"
+  p vk.driver "$(cat $icd | grep -o '"library_path" *: *"[^"]*"' | sed 's/"$//;s|.*[/"]||;s/^lib\\(vulkan\\|GLX\\)_//;s/\\.so.*//;s/^radeon$/radv/;s/^intel$/anv/;s/^intel_hasvk$/hasvk/;s/^nouveau$/nvk/' | grep -v '^lvp' | sort -u | paste -sd, - | sed 's/,/, /g')"
 fi
 [ -d /sys/firmware/efi ] && p boot.uefi yes
 f=$(ls /sys/firmware/efi/efivars/LoaderInfo-* 2>/dev/null | head -n1)

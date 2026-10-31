@@ -37,8 +37,9 @@ Rectangle {
     }
     onSearchTextChanged: refreshFilter()
 
-    // A search, the Online filter, or a sort dgop can't apply itself, has to see every process.
-    readonly property bool needsFullProcessList: active && (searchText.length > 0 || onlineOnly || DgopService.dgopSort() === "")
+    // The window lists every process; the popout shows dgop's top rows.
+    property bool fullList: false
+    readonly property bool needsFullProcessList: active && (fullList || searchText.length > 0 || onlineOnly || DgopService.dgopSort() === "")
     property bool holdsFullProcessList: false
     onNeedsFullProcessListChanged: {
         if (needsFullProcessList === holdsFullProcessList)
@@ -88,7 +89,7 @@ Rectangle {
     }
 
     readonly property var filteredProcesses: {
-        if (!DgopService.allProcesses || DgopService.allProcesses.length === 0)
+        if (!active || !DgopService.allProcesses || DgopService.allProcesses.length === 0)
             return [];
 
         let procs = DgopService.allProcesses.slice();

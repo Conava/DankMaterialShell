@@ -7,13 +7,7 @@ function isWholeDisk(name) {
     return WHOLE_DISK.test(name || "");
 }
 
-const KIND_PATTERNS = [
-    ["loopback", /^lo$/],
-    ["ethernet", /^(en|eth)/],
-    ["wifi", /^wl/],
-    ["vpn", /^(tailscale|wg|tun|tap|proton|nordlynx|ipv6leakintrf)/],
-    ["virtual", /^(veth|docker|virbr|br-|vnet|lxc|podman|cni|flannel)/]
-];
+const KIND_PATTERNS = [["loopback", /^lo$/], ["ethernet", /^(en|eth)/], ["wifi", /^wl/], ["vpn", /^(tailscale|wg|tun|tap|proton|nordlynx|ipv6leakintrf)/], ["virtual", /^(veth|docker|virbr|br-|vnet|lxc|podman|cni|flannel)/]];
 
 const LINK_KINDS = {
     ethernet: "ethernet",
@@ -87,10 +81,10 @@ function memoryModulesSummary(modules) {
     return [Format.formatBytes(total, true).replace(/\.0 /, " ")].concat(types).join(" ");
 }
 
-function formatTemp(celsius, fahrenheit) {
+function formatTemp(celsius) {
     if (celsius === null || celsius === undefined)
         return "—";
-    return fahrenheit ? Math.round(celsius * 9 / 5 + 32) + " °F" : Math.round(celsius) + " °C";
+    return Math.round(celsius) + " °C";
 }
 
 // Mirrors dgop: an id matches a GPU by vendor:device id or PCI bus id, case-insensitively.

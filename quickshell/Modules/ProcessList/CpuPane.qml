@@ -70,7 +70,7 @@ DevicePane {
         },
         {
             label: I18n.tr("Temperature"),
-            value: DgopService.cpuTemperature > 0 ? Devices.formatTemp(DgopService.cpuTemperature, SettingsData.useFahrenheit) : null
+            value: DgopService.cpuTemperature > 0 ? Devices.formatTemp(DgopService.cpuTemperature) : null
         },
         {
             advanced: true,
@@ -123,14 +123,17 @@ DevicePane {
     Rectangle {
         visible: root.perThread
         width: parent.width
-        height: threadGrid.implicitHeight + Theme.spacingL * 2
+        height: Math.max(root.chartCardHeight, threadGrid.implicitHeight + Theme.spacingL * 2)
         radius: Theme.cornerRadiusL
         color: Theme.surfaceContainerLow
 
         Grid {
             id: threadGrid
 
+            readonly property int rows: Math.max(1, Math.ceil(DgopService.perCoreCpuUsage.length / columns))
             readonly property real cellWidth: (width - spacing * (columns - 1)) / columns
+            // Fills the overall chart's height so the stats below stay put; many rows get a floor instead.
+            readonly property real cellHeight: Math.max(Theme.listItemHeight, (root.chartCardHeight - Theme.spacingL * 2 - spacing * (rows - 1)) / rows)
 
             x: Theme.spacingL
             y: Theme.spacingL
@@ -149,7 +152,7 @@ DevicePane {
                     readonly property real mhz: root.freqs[index] ?? 0
 
                     width: threadGrid.cellWidth
-                    height: Theme.listItemHeight * 1.5
+                    height: threadGrid.cellHeight
                     radius: Theme.cornerRadiusS
                     color: Theme.surfaceContainer
                     clip: true

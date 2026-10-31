@@ -126,7 +126,7 @@ Rectangle {
     function cardText() {
         const lines = [drive?.model || drive?.name || "", Drives.driveSubtitle(drive), drive?.device ?? ""];
         if (drive?.temperature != null)
-            lines.push(I18n.tr("Temperature") + ": " + Devices.formatTemp(drive.temperature, SettingsData.useFahrenheit));
+            lines.push(I18n.tr("Temperature") + ": " + Devices.formatTemp(drive.temperature));
         if (level !== "")
             lines.push(I18n.tr("Health") + ": " + health.text);
         for (const r of statRows)
@@ -220,7 +220,7 @@ Rectangle {
 
                 NumericText {
                     visible: root.drive?.temperature != null
-                    text: Devices.formatTemp(root.drive?.temperature ?? null, SettingsData.useFahrenheit)
+                    text: Devices.formatTemp(root.drive?.temperature ?? null)
                     font.pixelSize: Theme.fontSizeSmall
                     color: Theme.surfaceVariantText
                 }

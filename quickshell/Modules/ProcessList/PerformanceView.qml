@@ -105,12 +105,16 @@ Item {
         }
 
         const shown = nets.filter(n => root.showHidden || !Devices.isHiddenByDefault(n.kind));
-        for (const {net, kind} of shown) {
+        for (const {
+            net,
+            kind
+        } of shown) {
             const key = Devices.deviceKey("net", net.iface);
             const sameKind = shown.filter(n => n.kind === kind).length;
             items.push({
                 key: key,
                 group: I18n.tr("Network"),
+                hidden: Devices.isHiddenByDefault(kind),
                 icon: kind === "wifi" ? "wifi" : kind === "vpn" ? "vpn_key" : "lan",
                 name: sameKind === 1 && netKindNames[kind] ? netKindNames[kind] : net.iface,
                 value: pairTotal(net.rxRate, net.txRate),
@@ -139,11 +143,6 @@ Item {
     Ref {
         service: DgopService
         modules: ["cpu", "memory", "system", "disk-rate", "net-rate", "diskmounts", "gpu", "memory-modules"]
-        active: root.visible
-    }
-
-    Ref {
-        service: DriveService
         active: root.visible
     }
 

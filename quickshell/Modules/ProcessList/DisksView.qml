@@ -23,11 +23,6 @@ Item {
         active: root.visible
     }
 
-    Ref {
-        service: DriveService
-        active: root.visible
-    }
-
     DFlickable {
         id: scroll
         anchors.fill: parent

@@ -48,7 +48,7 @@ DevicePane {
     }
 
     function temp(v) {
-        return v === null || v === undefined ? null : Devices.formatTemp(v, SettingsData.useFahrenheit);
+        return v === null || v === undefined ? null : Devices.formatTemp(v);
     }
 
     function usedOf(usedKB, totalKB) {

@@ -35,7 +35,7 @@ function sensorOwner(sensor, drives, gpus, names, memoryIndex) {
 }
 
 // Display rows for dgop sensors: {name, kind, value, ratio}; ratio is null when there is no limit to scale against.
-function sensorRows(sensors, drives, gpus, names, fahrenheit) {
+function sensorRows(sensors, drives, gpus, names) {
     const memoryDevices = [];
     // -40 °C or below is an unconnected header probe (e.g. a board's T_Sensor or Water_In), not a reading.
     const rows = (sensors || []).filter(s => !(s.kind === "temperature" && s.value <= -40)).map(s => {
@@ -49,7 +49,7 @@ function sensorRows(sensors, drives, gpus, names, fahrenheit) {
         let value;
         if (s.kind === "temperature") {
             limit = limit || FALLBACK_TEMP_LIMIT;
-            value = Devices.formatTemp(s.value, fahrenheit);
+            value = Devices.formatTemp(s.value);
         } else if (s.kind === "fan") {
             value = Math.round(s.value) + " RPM";
         } else {

@@ -24,19 +24,6 @@ Singleton {
     property string processTab: "overview"
     property bool cpuPerThread: false
 
-    // Window app ids by PID: a window names its app more reliably than the process name does.
-    readonly property var windowAppIds: {
-        if (!DgopService.enabledModules.includes("processes"))
-            return ({});
-        const ids = {};
-        for (const t of CompositorService.sortedToplevels ?? []) {
-            const pid = CompositorService.windowPid(t);
-            if (pid > 0 && t?.appId && !ids[pid])
-                ids[pid] = t.appId;
-        }
-        return ids;
-    }
-
     // Desktop entries by the program their Exec= runs, plus its first fixed argument ("dms run" is the shell).
     readonly property var execEntries: {
         const map = {};
@@ -63,8 +50,26 @@ Singleton {
     // Cached per process until the window list or installed apps change.
     readonly property var _appMemo: ({
             "entries": null,
+            "toplevels": null,
+            "windowIds": {},
             "cache": new Map()
         })
+
+    // A window names its app more reliably than the process name does. Built on demand, so nothing runs while no process view is open.
+    function windowAppId(pid) {
+        const memo = _appMemo;
+        const toplevels = CompositorService.sortedToplevels ?? [];
+        if (memo.toplevels !== toplevels) {
+            memo.toplevels = toplevels;
+            memo.windowIds = {};
+            for (const t of toplevels) {
+                const windowPid = CompositorService.windowPid(t);
+                if (windowPid > 0 && t?.appId && !memo.windowIds[windowPid])
+                    memo.windowIds[windowPid] = t.appId;
+            }
+        }
+        return memo.windowIds[pid];
+    }
 
     Connections {
         target: DgopService
@@ -75,7 +80,7 @@ Singleton {
     }
 
     function appEntry(process, extraKeys) {
-        const windowId = windowAppIds[process?.pid];
+        const windowId = windowAppId(process?.pid);
         const memo = _appMemo;
         if (memo.entries !== execEntries || memo.cache.size > 4000) {
             memo.entries = execEntries;
