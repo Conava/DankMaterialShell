@@ -5,6 +5,7 @@ import QtQuick.Layouts
 import qs.Common
 import qs.Services
 import qs.DCommon.Widgets
+import qs.Modules.Settings.Widgets
 import "../../Common/Format.js" as Format
 import "Drives.js" as Drives
 
@@ -65,91 +66,81 @@ Item {
                 }
             }
 
-            DCollapsibleSection {
-                id: mountSection
+            // Spacing 0 like SettingsCard: the label's own bottom gap sets the distance to the list.
+            ColumnLayout {
+                Layout.fillWidth: true
                 visible: root.looseMounts.length > 0
-                title: I18n.tr("Mount Points", "mount points header in system monitor")
-                expanded: !root.hasDrives
+                spacing: 0
 
-                Column {
+                SettingsSectionLabel {
                     Layout.fillWidth: true
-                    spacing: Theme.spacingXS
+                    topGap: 0
+                    text: I18n.tr("Mount Points", "mount points header in system monitor")
+                }
+
+                SettingsGroup {
+                    Layout.fillWidth: true
+                    customPaddingV: 0
+                    customPaddingH: Theme.spacingL
 
                     Repeater {
-                        model: root.looseMounts
+                        model: root.looseMounts.length
 
-                        Item {
+                        RowLayout {
                             id: mountRow
-                            required property var modelData
 
-                            readonly property real usedPct: (parseFloat(modelData?.percent) || 0) / 100
-                            readonly property color usageColor: usedPct > 0.95 ? Theme.error : usedPct > 0.85 ? Theme.warning : Theme.primary
+                            required property int index
+                            readonly property var mount: root.looseMounts[index] ?? ({})
+                            readonly property real usedRatio: (parseFloat(mount.percent) || 0) / 100
 
-                            width: parent.width
-                            height: Theme.listItemHeight
+                            width: parent?.width ?? 0
+                            height: Theme.buttonHeightS
+                            spacing: Theme.spacingL
 
-                            RowLayout {
-                                anchors.fill: parent
-                                spacing: Theme.spacingM
+                            DIcon {
+                                name: "folder"
+                                size: Theme.iconSizeSmall
+                                color: Theme.surfaceVariantText
+                            }
 
-                                Column {
-                                    Layout.fillWidth: true
-                                    spacing: Theme.spacingXS
+                            StyledText {
+                                Layout.fillWidth: true
+                                text: mountRow.mount.mount ?? ""
+                                font.pixelSize: Theme.fontSizeMedium
+                                color: Theme.surfaceText
+                                wrapMode: Text.NoWrap
+                                elide: Text.ElideMiddle
+                            }
 
-                                    StyledText {
-                                        width: parent.width
-                                        text: mountRow.modelData?.mount ?? ""
-                                        wrapMode: Text.NoWrap
-                                        elide: Text.ElideMiddle
-                                        font.pixelSize: Theme.fontSizeSmall
-                                        font.weight: Theme.fontWeightMedium
-                                        color: Theme.surfaceText
-                                    }
+                            StyledText {
+                                Layout.preferredWidth: Theme.fontSizeMedium * 7
+                                text: mountRow.mount.fstype ?? ""
+                                font.pixelSize: Theme.fontSizeSmall
+                                color: Theme.surfaceVariantText
+                                wrapMode: Text.NoWrap
+                                elide: Text.ElideRight
+                            }
 
-                                    StyledText {
-                                        width: parent.width
-                                        text: (mountRow.modelData?.device ?? "") + " • " + (mountRow.modelData?.fstype ?? "")
-                                        wrapMode: Text.NoWrap
-                                        elide: Text.ElideRight
-                                        font.pixelSize: Theme.fontSizeXSmall
-                                        color: Theme.surfaceVariantText
-                                    }
+                            Rectangle {
+                                Layout.preferredWidth: Theme.fontSizeMedium * 10
+                                Layout.preferredHeight: Theme.spacingS
+                                radius: height / 2
+                                color: Theme.surfaceContainerHighest
+
+                                Rectangle {
+                                    width: parent.width * Math.min(1, mountRow.usedRatio)
+                                    height: parent.height
+                                    radius: height / 2
+                                    color: mountRow.usedRatio > 0.95 ? Theme.error : mountRow.usedRatio > 0.85 ? Theme.warning : Theme.primary
                                 }
+                            }
 
-                                Column {
-                                    Layout.preferredWidth: Theme.fontSizeSmall * 15
-                                    spacing: Theme.spacingXS
-
-                                    Rectangle {
-                                        width: parent.width
-                                        height: Theme.spacingS
-                                        radius: Theme.fullRadius(width, height)
-                                        color: Theme.outlineHeavy
-
-                                        Rectangle {
-                                            width: parent.width * Math.min(1, mountRow.usedPct)
-                                            height: parent.height
-                                            radius: Theme.fullRadius(width, height)
-                                            color: mountRow.usageColor
-                                        }
-                                    }
-
-                                    StyledText {
-                                        anchors.right: parent.right
-                                        text: (mountRow.modelData?.used ?? "") + " / " + (mountRow.modelData?.size ?? "")
-                                        font.pixelSize: Theme.fontSizeXSmall
-                                        color: Theme.surfaceVariantText
-                                    }
-                                }
-
-                                StyledText {
-                                    Layout.preferredWidth: Theme.fontSizeSmall * 4
-                                    text: mountRow.modelData?.percent ?? ""
-                                    font.pixelSize: Theme.fontSizeSmall
-                                    font.weight: Theme.fontWeightMedium
-                                    color: mountRow.usedPct > 0.85 ? mountRow.usageColor : Theme.surfaceText
-                                    horizontalAlignment: Text.AlignRight
-                                }
+                            NumericText {
+                                Layout.preferredWidth: Theme.fontSizeMedium * 12
+                                horizontalAlignment: Text.AlignRight
+                                text: (mountRow.mount.used ?? "") + " / " + (mountRow.mount.size ?? "")
+                                font.pixelSize: Theme.fontSizeSmall
+                                color: Theme.surfaceText
                             }
                         }
                     }

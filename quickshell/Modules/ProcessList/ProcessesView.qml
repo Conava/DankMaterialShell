@@ -123,7 +123,7 @@ Rectangle {
     readonly property real nameMinWidth: Theme.fontSizeSmall * 16
     readonly property var visibleColumns: root.columns.map(id => ProcessColumns.COLUMNS.find(c => c.id === id)).filter(c => c)
     // Wider than the card when many columns are on: the whole table then scrolls sideways, the name keeps its minimum.
-    readonly property real tableWidth: Math.max(root.width, (Theme.spacingS + Theme.spacingL) * 2 + root.leadWidth + root.nameMinWidth + visibleColumns.reduce((sum, c) => sum + root.columnWidth(c) + Theme.spacingXS * 2, 0))
+    readonly property real tableWidth: Math.max(root.width, Theme.spacingL * 2 + root.leadWidth + root.nameMinWidth + visibleColumns.reduce((sum, c) => sum + root.columnWidth(c) + Theme.spacingXS * 2, 0))
     readonly property var visibleColumnIds: visibleColumns.map(c => c.id)
     readonly property real leadWidth: ProcessListMetrics.appIconSize + Theme.spacingS
 
@@ -433,8 +433,6 @@ Rectangle {
     DFlickable {
         id: tableScroll
         anchors.fill: parent
-        anchors.topMargin: Theme.spacingS
-        anchors.bottomMargin: Theme.spacingS
         contentWidth: root.tableWidth
         contentHeight: height
         horizontal: true
@@ -450,8 +448,6 @@ Rectangle {
 
             Rectangle {
                 Layout.fillWidth: true
-                Layout.leftMargin: Theme.spacingS
-                Layout.rightMargin: Theme.spacingS
                 Layout.bottomMargin: Theme.spacingM
                 implicitHeight: header.implicitHeight
                 radius: Theme.cornerRadiusS
@@ -495,8 +491,6 @@ Rectangle {
                 id: processListView
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                Layout.leftMargin: Theme.spacingS
-                Layout.rightMargin: Theme.spacingS
                 clip: true
                 reuseItems: true
                 activeFocusOnTab: true
@@ -526,7 +520,7 @@ Rectangle {
                     width: processListView.width
                     rowHeight: root.rowHeight
                     detailX: tableScroll.contentX
-                    detailWidth: Math.min(width, tableScroll.width - Theme.spacingS * 2)
+                    detailWidth: Math.min(width, tableScroll.width)
                     keyForwardTargets: [processKeys]
                     KeyNavigation.backtab: nameHeader
                     columns: root.visibleColumnIds
