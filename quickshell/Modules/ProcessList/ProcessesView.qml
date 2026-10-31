@@ -68,8 +68,20 @@ Rectangle {
     property bool keyboardNavigationActive: false
     property int forceRefreshCount: 0
 
-    readonly property bool pauseUpdates: (contextMenu?.visible ?? false) || (contextMenu?.confirmationOpen ?? false) || expandedPid.length > 0
+    readonly property bool holdOrder: (contextMenu?.visible ?? false) || (contextMenu?.confirmationOpen ?? false) || expandedPid.length > 0
+    // The order stays put for one more sample after a row or menu closes, so the list does not re-sort under the pointer.
+    readonly property bool pauseUpdates: holdOrder || resumeHold.running
     readonly property bool shouldUpdate: !pauseUpdates || forceRefreshCount > 0
+
+    onHoldOrderChanged: {
+        if (!holdOrder)
+            resumeHold.restart();
+    }
+
+    Timer {
+        id: resumeHold
+        interval: DgopService.updateInterval
+    }
     property var cachedProcesses: []
 
     onFilteredProcessesChanged: {
@@ -493,6 +505,7 @@ Rectangle {
                 Layout.fillHeight: true
                 clip: true
                 reuseItems: true
+                cacheBuffer: Math.round(height)
                 activeFocusOnTab: true
                 focus: true
                 Keys.onPressed: event => root.handleKey(event)

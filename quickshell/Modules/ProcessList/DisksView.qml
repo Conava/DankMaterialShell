@@ -6,7 +6,6 @@ import qs.Common
 import qs.Services
 import qs.DCommon.Widgets
 import qs.Modules.Settings.Widgets
-import "../../Common/Format.js" as Format
 import "Drives.js" as Drives
 
 Item {
@@ -20,13 +19,23 @@ Item {
 
     Ref {
         service: DgopService
-        modules: ["disk", "diskmounts"]
+        modules: ["diskmounts"]
         active: root.visible
+    }
+
+    // Held until the first drive reply, so the cards do not shuffle in one by one on the first visit.
+    readonly property bool ready: DriveService.loaded || !DriveService.polling
+
+    DSpinner {
+        anchors.centerIn: parent
+        size: Theme.iconSize * 2
+        visible: !root.ready
     }
 
     DFlickable {
         id: scroll
         anchors.fill: parent
+        visible: root.ready
         contentWidth: width
         contentHeight: column.implicitHeight
 
@@ -34,24 +43,6 @@ Item {
             id: column
             width: scroll.width
             spacing: Theme.spacingL
-
-            // Old-core fallback keeps the aggregate I/O line the card would otherwise carry
-            Row {
-                visible: !root.hasDrives
-                spacing: Theme.spacingL
-
-                StyledText {
-                    text: I18n.tr("Disk read", "disk read rate") + " " + Format.formatRate(DgopService.diskReadRate)
-                    font.pixelSize: Theme.fontSizeSmall
-                    color: Theme.primary
-                }
-
-                StyledText {
-                    text: I18n.tr("Disk write", "disk write rate") + " " + Format.formatRate(DgopService.diskWriteRate)
-                    font.pixelSize: Theme.fontSizeSmall
-                    color: Theme.tertiary
-                }
-            }
 
             Repeater {
                 model: root.drives.length
@@ -108,6 +99,15 @@ Item {
                                 text: mountRow.mount.mount ?? ""
                                 font.pixelSize: Theme.fontSizeMedium
                                 color: Theme.surfaceText
+                                wrapMode: Text.NoWrap
+                                elide: Text.ElideMiddle
+                            }
+
+                            StyledText {
+                                Layout.preferredWidth: Theme.fontSizeMedium * 10
+                                text: mountRow.mount.device ?? ""
+                                font.pixelSize: Theme.fontSizeSmall
+                                color: Theme.surfaceVariantText
                                 wrapMode: Text.NoWrap
                                 elide: Text.ElideMiddle
                             }

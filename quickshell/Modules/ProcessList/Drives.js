@@ -216,7 +216,7 @@ function driveIcon(drive) {
 function driveSubtitle(drive) {
     if (!drive)
         return "";
-    return [kindName(drive), drive.size > 0 ? formatCapacity(drive.size) : "", drive.pcieLink || ""].filter(s => s).join(", ");
+    return [kindName(drive), drive.size > 0 ? formatCapacity(drive.size) : "", drive.link || ""].filter(s => s).join(", ");
 }
 
 function driveFor(name, drives) {

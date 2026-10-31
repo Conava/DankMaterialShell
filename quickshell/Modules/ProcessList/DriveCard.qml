@@ -60,6 +60,8 @@ Rectangle {
             add(I18n.tr("Firmware", "drive firmware revision"), drive.firmware);
         for (const r of smartRows)
             add(rowLabel(r.id), String(rowValue(r)));
+        for (const r of deviceRows)
+            add(r.label, r.value);
         return rows;
     }
 
@@ -121,6 +123,61 @@ Rectangle {
         if (fs.usedRatio !== null && fs.size > 0)
             return I18n.tr("%1 of %2 used", "partition space, e.g. 1.2 TB of 2 TB used").arg(Drives.formatCapacity(fs.size * fs.usedRatio)).arg(Drives.formatCapacity(fs.size));
         return fs.size > 0 ? Drives.formatCapacity(fs.size) : "";
+    }
+
+    readonly property var deviceRows: {
+        const q = drive?.queue ?? null;
+        const yes = I18n.tr("Yes");
+        const sector = q?.logicalBlock > 0 ? (q.physicalBlock > q.logicalBlock ? q.logicalBlock + " B / " + Format.formatBytes(q.physicalBlock, true) : q.logicalBlock + " B") : "";
+        const bus = drive?.connectionBus ? drive.connectionBus.toUpperCase() : "";
+        const rows = [[I18n.tr("Serial number", "drive serial number"), drive?.serial ?? ""], [I18n.tr("WWN", "drive world wide name, a unique id"), drive?.wwn ?? ""], [I18n.tr("Interface"), [bus, drive?.link ?? ""].filter(s => s).join(", ")], [I18n.tr("Partition table"), drive?.tableType === "gpt" ? "GPT" : drive?.tableType === "dos" ? "MBR" : ""], [I18n.tr("Sector size", "logical and physical disk sector size"), sector], [I18n.tr("I/O scheduler", "Linux block I/O scheduler"), q?.scheduler ?? ""], [I18n.tr("Write cache", "disk write cache mode"), q?.writeCache ?? ""], [I18n.tr("TRIM", "SSD discard support"), q ? (q.trim ? yes : I18n.tr("No")) : ""], [I18n.tr("Queue depth", "block device request queue depth"), q?.depth > 0 ? String(q.depth) : ""], [I18n.tr("Removable"), drive?.removable ? yes : ""]];
+        return rows.filter(r => r[1] !== "").map(r => ({
+                    "label": r[0],
+                    "value": r[1]
+                }));
+    }
+
+    readonly property var reliabilityRows: smartRows.map(r => ({
+                "label": rowLabel(r.id),
+                "value": String(rowValue(r))
+            }))
+
+    // A titled grouped list; count models so a 30 s drive poll rebinds rows instead of rebuilding them.
+    component DetailGroup: ColumnLayout {
+        id: group
+
+        property string title: ""
+        property var rows: []
+
+        visible: rows.length > 0
+        Layout.fillWidth: true
+        Layout.preferredWidth: 1
+        Layout.alignment: Qt.AlignTop
+        spacing: 0
+
+        SettingsSectionLabel {
+            Layout.fillWidth: true
+            topGap: 0
+            text: group.title
+        }
+
+        SettingsGroup {
+            Layout.fillWidth: true
+            customPaddingV: 0
+            customPaddingH: Theme.spacingL
+
+            Repeater {
+                model: group.rows.length
+
+                StatRow {
+                    required property int index
+                    readonly property var row: group.rows[index] ?? ({})
+                    height: Theme.buttonHeightXS
+                    label: row.label ?? ""
+                    value: row.value ?? ""
+                }
+            }
+        }
     }
 
     function cardText() {
@@ -367,6 +424,22 @@ Rectangle {
                         color: Theme.surfaceText
                     }
                 }
+            }
+        }
+
+        RowLayout {
+            visible: root.expanded
+            Layout.fillWidth: true
+            spacing: Theme.spacingL
+
+            DetailGroup {
+                title: I18n.tr("Device")
+                rows: root.deviceRows
+            }
+
+            DetailGroup {
+                title: I18n.tr("Reliability", "drive health counters section")
+                rows: root.reliabilityRows
             }
         }
 

@@ -36,6 +36,16 @@ type ListResult struct {
 	InstallCommand string  `json:"installCommand"`
 }
 
+// QueueInfo is the kernel block queue setup from /sys/block/<name>/queue.
+type QueueInfo struct {
+	Scheduler     string `json:"scheduler,omitempty"`
+	LogicalBlock  int    `json:"logicalBlock,omitempty"`
+	PhysicalBlock int    `json:"physicalBlock,omitempty"`
+	WriteCache    string `json:"writeCache,omitempty"`
+	Trim          bool   `json:"trim"`
+	Depth         int    `json:"depth,omitempty"`
+}
+
 type Drive struct {
 	ID            string      `json:"id"`
 	Model         string      `json:"model"`
@@ -52,7 +62,10 @@ type Drive struct {
 	SmartUpdated  uint64      `json:"smartUpdated,omitempty"`
 	Temperature   *float64    `json:"temperature,omitempty"`
 	Health        string      `json:"health,omitempty"`
-	PCIeLink      string      `json:"pcieLink,omitempty"`
+	WWN           string      `json:"wwn,omitempty"`
+	TableType     string      `json:"tableType,omitempty"`
+	Link          string      `json:"link,omitempty"`
+	Queue         *QueueInfo  `json:"queue,omitempty"`
 	NVMe          *NVMeSmart  `json:"nvme,omitempty"`
 	ATA           *ATASmart   `json:"ata,omitempty"`
 	Partitions    []Partition `json:"partitions"`
@@ -168,14 +181,19 @@ func buildDrives(objects objectMap, nvmeAttrs map[dbus.ObjectPath]map[string]dbu
 			Device:        device,
 			Name:          path.Base(device),
 			Removable:     dbusutil.GetOr(props, "Removable", false),
+			WWN:           dbusutil.GetOr(props, "WWN", ""),
+			TableType:     dbusutil.GetOr(objects[blockPath][ifacePartitionTable], "Type", ""),
 			ConnectionBus: dbusutil.GetOr(props, "ConnectionBus", ""),
 			RotationRate:  dbusutil.GetOr(props, "RotationRate", int32(0)),
 			Kind:          driveKind(ifaces),
 			Partitions:    partitions(objects, blockPath, cleartext),
 		}
+		d.Queue = queueInfo(d.Name)
 		if ctrl, ok := ifaces[ifaceNVMe]; ok {
 			fillNVMe(&d, ctrl, nvmeAttrs[p])
-			d.PCIeLink = pcieLink(d.Name)
+			d.Link = pcieLink(d.Name)
+		} else {
+			d.Link = sataLink(d.Name)
 		}
 		if ata, ok := ifaces[ifaceATA]; ok && dbusutil.GetOr(ata, "SmartSupported", false) && dbusutil.GetOr(ata, "SmartEnabled", false) {
 			d.Asleep = asleep[p]
@@ -430,8 +448,69 @@ func byteString(b []byte) string {
 var (
 	sysClassNVMe    = "/sys/class/nvme"
 	sysClassNVMeSub = "/sys/class/nvme-subsystem"
+	sysClassATALink = "/sys/class/ata_link"
 	sysBlock        = "/sys/block"
 )
+
+func readSysfs(parts ...string) string {
+	b, err := os.ReadFile(filepath.Join(parts...))
+	if err != nil {
+		return ""
+	}
+	return strings.TrimSpace(string(b))
+}
+
+// queueInfo reads the block queue attributes, which the kernel serves from memory.
+func queueInfo(name string) *QueueInfo {
+	dir := filepath.Join(sysBlock, name, "queue")
+	if _, err := os.Stat(dir); err != nil {
+		return nil
+	}
+	num := func(f string) int {
+		n, _ := strconv.Atoi(readSysfs(dir, f))
+		return n
+	}
+	return &QueueInfo{
+		Scheduler:     activeScheduler(readSysfs(dir, "scheduler")),
+		LogicalBlock:  num("logical_block_size"),
+		PhysicalBlock: num("physical_block_size"),
+		WriteCache:    readSysfs(dir, "write_cache"),
+		Trim:          num("discard_granularity") > 0,
+		Depth:         num("nr_requests"),
+	}
+}
+
+// activeScheduler picks the bracketed entry of "[none] mq-deadline kyber bfq".
+func activeScheduler(list string) string {
+	for _, s := range strings.Fields(list) {
+		if strings.HasPrefix(s, "[") && strings.HasSuffix(s, "]") {
+			return s[1 : len(s)-1]
+		}
+	}
+	return ""
+}
+
+var ataPortRe = regexp.MustCompile(`^ata(\d+)$`)
+
+// sataLink formats the negotiated SATA speed of a disk, e.g. "SATA 6.0 Gbps". The disk's device path runs through
+// its ataN port, whose first link holds the speed. Empty for anything that is not on an ATA port.
+func sataLink(name string) string {
+	target, err := filepath.EvalSymlinks(filepath.Join(sysBlock, name, "device"))
+	if err != nil {
+		return ""
+	}
+	for _, part := range strings.Split(target, string(filepath.Separator)) {
+		m := ataPortRe.FindStringSubmatch(part)
+		if m == nil {
+			continue
+		}
+		if spd := readSysfs(sysClassATALink, "link"+m[1], "sata_spd"); spd != "" && spd != "<unknown>" {
+			return "SATA " + spd
+		}
+		return ""
+	}
+	return ""
+}
 
 var nvmeNameRe = regexp.MustCompile(`^nvme(\d+)(?:c(\d+))?n\d+$`)
 

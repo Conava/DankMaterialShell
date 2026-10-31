@@ -129,6 +129,7 @@ FocusScope {
                                 enabled: (entry.modelData.valueTooltip ?? "") !== ""
                                 hoverEnabled: true
                                 acceptedButtons: Qt.NoButton
+                                cursorShape: Qt.PointingHandCursor
                             }
 
                             DTooltipHost {

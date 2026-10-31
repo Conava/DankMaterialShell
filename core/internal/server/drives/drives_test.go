@@ -376,3 +376,30 @@ func TestPCIeLink(t *testing.T) {
 	assert.Empty(t, pcieLink("nvme9n1"))
 	assert.Empty(t, pcieLink("sda"))
 }
+
+func TestQueueInfoAndSataLink(t *testing.T) {
+	root := t.TempDir()
+	oldBlk, oldLink := sysBlock, sysClassATALink
+	sysBlock, sysClassATALink = filepath.Join(root, "block"), filepath.Join(root, "ata_link")
+	t.Cleanup(func() { sysBlock, sysClassATALink = oldBlk, oldLink })
+
+	queue := filepath.Join(sysBlock, "sda", "queue")
+	require.NoError(t, os.MkdirAll(queue, 0o755))
+	for f, v := range map[string]string{
+		"scheduler": "[mq-deadline] none kyber\n", "logical_block_size": "512\n", "physical_block_size": "4096\n",
+		"write_cache": "write back\n", "discard_granularity": "0\n", "nr_requests": "64\n",
+	} {
+		require.NoError(t, os.WriteFile(filepath.Join(queue, f), []byte(v), 0o644))
+	}
+	port := filepath.Join(root, "devices", "pci0000:00", "0000:00:17.0", "ata3", "host2", "target2:0:0", "2:0:0:0")
+	require.NoError(t, os.MkdirAll(port, 0o755))
+	require.NoError(t, os.Symlink(port, filepath.Join(sysBlock, "sda", "device")))
+	link := filepath.Join(sysClassATALink, "link3")
+	require.NoError(t, os.MkdirAll(link, 0o755))
+	require.NoError(t, os.WriteFile(filepath.Join(link, "sata_spd"), []byte("6.0 Gbps\n"), 0o644))
+
+	assert.Equal(t, &QueueInfo{Scheduler: "mq-deadline", LogicalBlock: 512, PhysicalBlock: 4096, WriteCache: "write back", Depth: 64}, queueInfo("sda"))
+	assert.Equal(t, "SATA 6.0 Gbps", sataLink("sda"))
+	assert.Nil(t, queueInfo("sdz"))
+	assert.Equal(t, "", sataLink("sdz"))
+}
