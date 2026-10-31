@@ -41,9 +41,7 @@ func FullReport(device string) (*Report, error) {
 	if path == "" {
 		return nil, errors.New("smartctl not found")
 	}
-	if !reportMu.TryLock() {
-		return nil, errors.New("another report is running")
-	}
+	reportMu.Lock()
 	defer reportMu.Unlock()
 
 	ctx, cancel := context.WithTimeout(context.Background(), reportTimeout)

@@ -48,8 +48,8 @@ Item {
     readonly property var gpus: DgopService.availableGpus ?? []
     readonly property string mesa: SystemInfo.mesaVersion(f)
     readonly property string compositorVersion: {
-        const key = Object.keys(f).find(k => k === "wm." + CompositorService.compositor) ?? Object.keys(f).find(k => k.startsWith("wm."));
-        return key ? SystemInfo.version(f[key]) : "";
+        const raw = f["wm." + CompositorService.compositor];
+        return raw ? SystemInfo.version(raw) : "";
     }
     readonly property string compositorText: [CompositorService.displayName, compositorVersion].filter(x => x).join(" ")
     readonly property string memoryText: DgopService.totalMemoryKB > 0 ? DgopService.formatSystemMemory(DgopService.totalMemoryKB) : ""
@@ -89,20 +89,28 @@ Item {
         if (!PowerProfileWatcher.available)
             return "";
         switch (PowerProfiles.profile) {
-        case PowerProfile.PowerSaver: return I18n.tr("Power Saver");
-        case PowerProfile.Performance: return I18n.tr("Performance");
+        case PowerProfile.PowerSaver:
+            return I18n.tr("Power Saver");
+        case PowerProfile.Performance:
+            return I18n.tr("Performance");
         }
         return I18n.tr("Balanced");
     }
 
     readonly property string chassisText: {
         switch (SystemInfo.chassisKind(f["dmi.chassis_type"])) {
-        case "desktop": return I18n.tr("Desktop", "computer chassis type");
-        case "laptop": return I18n.tr("Laptop", "computer chassis type");
-        case "server": return I18n.tr("Server", "computer chassis type");
-        case "tablet": return I18n.tr("Tablet", "computer chassis type");
-        case "convertible": return I18n.tr("Convertible", "computer chassis type: laptop that turns into a tablet");
-        case "mini": return I18n.tr("Mini PC", "computer chassis type");
+        case "desktop":
+            return I18n.tr("Desktop", "computer chassis type");
+        case "laptop":
+            return I18n.tr("Laptop", "computer chassis type");
+        case "server":
+            return I18n.tr("Server", "computer chassis type");
+        case "tablet":
+            return I18n.tr("Tablet", "computer chassis type");
+        case "convertible":
+            return I18n.tr("Convertible", "computer chassis type: laptop that turns into a tablet");
+        case "mini":
+            return I18n.tr("Mini PC", "computer chassis type");
         }
         return "";
     }
@@ -214,17 +222,19 @@ Item {
     ]
 
     function copy(text) {
-        Quickshell.execDetached([Proc.dmsBin, "cl", "copy", text]);
+        Quickshell.execDetached([Proc.dmsBin, "cl", "copy", "--", text]);
         ToastService.showInfo(I18n.tr("Copied to clipboard"));
     }
 
     // Everything on the page except personal rows (hostname, user, network names), plus system check findings.
     function reportText() {
         const issues = doctorIssues.map(r => row("[" + r.status + "] " + r.name, r.message));
-        return SystemInfo.report(I18n.tr("System report", "title of the copied system information"), sections.concat(issues.length ? [{
-                        "title": I18n.tr("System check"),
-                        "rows": issues
-                    }] : []));
+        return SystemInfo.report(I18n.tr("System report", "title of the copied system information"), sections.concat(issues.length ? [
+            {
+                "title": I18n.tr("System check"),
+                "rows": issues
+            }
+        ] : []));
     }
 
     function summaryText() {

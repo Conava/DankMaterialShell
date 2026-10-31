@@ -67,7 +67,7 @@ Column {
     }
 
     // Read when the card is open, not for every drive at once: smartctl wakes a sleeping disk.
-    readonly property bool shouldRun: unlocked && wanted && !!drive?.device
+    readonly property bool shouldRun: unlocked && wanted && !!drive?.device && !drive.asleep
     onShouldRunChanged: {
         if ((shouldRun && state_ === "idle") || !unlocked)
             run();
