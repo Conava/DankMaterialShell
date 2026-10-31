@@ -78,8 +78,7 @@ function packagesText(facts) {
 }
 
 function mesaVersion(facts) {
-    const m = /Mesa (\d+\.\d+(?:\.\d+)?)/.exec((facts || {}).gl || "");
-    return m ? m[1] : "";
+    return version((facts || {}).mesa);
 }
 
 const DMI_PLACEHOLDERS = ["system product name", "to be filled by o.e.m.", "default string", "not applicable", "system version", "none", "o.e.m."];

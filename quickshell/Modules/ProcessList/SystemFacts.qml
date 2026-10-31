@@ -1,5 +1,4 @@
 import QtQuick
-import Quickshell
 import Quickshell.Io
 import qs.Common
 
@@ -12,7 +11,7 @@ Item {
     property var doctor: null
     readonly property bool doctorRunning: doctorProc.running
 
-    // Every command only reads; a missing tool prints nothing for its key.
+    // Every command only reads. No GL, Vulkan or PCI probe: creating a context or touching config space wakes a suspended GPU.
     readonly property string script: `
 v() { command -v "$1" >/dev/null 2>&1; }
 p() { printf '%s=%s\\n' "$1" "$(printf '%s' "$2" | head -n1 | tr -d '\\r')"; }
@@ -37,7 +36,9 @@ v flatpak && p pkg.flatpak "$(flatpak list 2>/dev/null | wc -l)"
 v snap && p pkg.snap "$(snap list 2>/dev/null | tail -n +2 | wc -l)"
 [ -d /run/current-system ] && v nix-store && p pkg.nix "$(nix-store -qR /run/current-system 2>/dev/null | wc -l)"
 v pipewire && p pipewire "$(pipewire --version 2>/dev/null | sed -n 's/.*libpipewire \\([0-9.]*\\).*/\\1/p')"
-v glxinfo && p gl "$(glxinfo -B 2>/dev/null | grep -m1 'OpenGL version string' | sed 's/.*: //')"
+mesa=$(ls /usr/lib/libgallium-*.so /usr/lib64/libgallium-*.so /usr/lib/*-linux-gnu/libgallium-*.so 2>/dev/null | head -n1 | sed 's/.*libgallium-//;s/\\.so$//')
+[ -z "$mesa" ] && v pkg-config && mesa=$(pkg-config --modversion dri 2>/dev/null)
+p mesa "$mesa"
 icd=$(ls /usr/share/vulkan/icd.d/*.json /etc/vulkan/icd.d/*.json 2>/dev/null)
 if [ -n "$icd" ]; then
   p vk.api "$(cat $icd | grep -o '"api_version" *: *"[^"]*"' | sed 's/.*: *"//;s/"//' | sort -V | tail -n1)"
