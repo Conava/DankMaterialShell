@@ -5,8 +5,6 @@ import qs.Common
 import qs.Services
 import qs.DCommon.Widgets
 
-// Hero chart: series 1 solid and filled in primary, series 2 dashed in tertiary,
-// a word legend with the current values, the axis maximum and a time axis.
 Rectangle {
     id: root
 
@@ -21,7 +19,6 @@ Rectangle {
     property int historyLength: 0
     property real chartHeight: Theme.listItemHeight * 2
     property color cardColor: Theme.surfaceContainerLow
-    // Inline variant: legend words only, no padding, values, maximum or time axis.
     property bool compact: false
     readonly property real padding: compact ? 0 : Theme.spacingL
 

@@ -21,7 +21,6 @@ DevicePane {
     readonly property real speedMT: mods.length > 0 ? (mods[0].configuredSpeed || mods[0].speed || 0) : 0
     readonly property bool hasZram: (info?.zramOrig ?? 0) > 0 && (info?.zramCompr ?? 0) > 0
 
-    // dgop reports memory in KB
     function bytes(kb) {
         return kb === null || kb === undefined ? null : Format.formatBytes(kb * 1024, true);
     }

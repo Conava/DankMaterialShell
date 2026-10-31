@@ -154,7 +154,6 @@ Rectangle {
             Layout.fillWidth: true
             implicitHeight: header.implicitHeight
 
-            // The whole header bar toggles the card, not only the arrow.
             Rectangle {
                 anchors.fill: parent
                 anchors.margins: -Theme.spacingS
@@ -290,14 +289,15 @@ Rectangle {
                 customPaddingH: Theme.spacingL
 
                 Repeater {
-                    model: root.statRows
+                    model: root.statRows.length
 
                     StatRow {
-                        required property var modelData
+                        required property int index
+                        readonly property var row: root.statRows[index]
                         height: Theme.buttonHeightXS
-                        label: modelData.label
-                        value: modelData.value
-                        tooltip: modelData.tooltip ?? ""
+                        label: row.label
+                        value: row.value
+                        tooltip: row.tooltip ?? ""
                     }
                 }
             }
@@ -310,12 +310,13 @@ Rectangle {
             customPaddingH: Theme.spacingL
 
             Repeater {
-                model: root.filesystems
+                model: root.filesystems.length
 
                 RowLayout {
                     id: fsRow
 
-                    required property var modelData
+                    required property int index
+                    readonly property var modelData: root.filesystems[index]
 
                     width: parent?.width ?? 0
                     height: Theme.buttonHeightS
@@ -413,6 +414,7 @@ Rectangle {
             id: smartReport
             Layout.fillWidth: true
             drive: root.drive
+            wanted: root.expanded
             visible: root.expanded && state_ !== "idle"
         }
     }

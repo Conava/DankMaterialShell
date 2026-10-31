@@ -3,7 +3,7 @@ import QtQuick.Shapes
 import qs.Common
 import qs.DCommon.Widgets
 
-// A Material Symbols icon, or a device glyph Material lacks, drawn on its 24 px grid at its (dark-grade) stroke.
+// Device glyphs Material Symbols lacks, drawn on its 24 px grid.
 Item {
     id: root
 

@@ -33,7 +33,7 @@ func List() (ListResult, error) {
 	if err != nil {
 		return ListResult{}, err
 	}
-	return ListResult{Drives: drives, Smartctl: smartctlPath(), InstallCommand: installCommand("/")}, nil
+	return ListResult{Drives: drives, Smartctl: smartctlPath(), InstallCommand: installCommand()}, nil
 }
 
 func listDrives(conn *dbus.Conn) ([]Drive, error) {

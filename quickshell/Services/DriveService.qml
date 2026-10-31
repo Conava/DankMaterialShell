@@ -34,7 +34,9 @@ Singleton {
                 return;
             }
             root._errorLogged = false;
-            root.drives = response.result.drives || [];
+            const drives = response.result.drives || [];
+            if (JSON.stringify(drives) !== JSON.stringify(root.drives))
+                root.drives = drives;
             root.smartctlPath = response.result.smartctl || "";
             root.installCommand = response.result.installCommand || "";
             root.loaded = true;

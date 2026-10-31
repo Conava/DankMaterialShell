@@ -1,5 +1,4 @@
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import qs.Common
@@ -36,8 +35,8 @@ Rectangle {
     }
     onSearchTextChanged: refreshFilter()
 
-    // A search, or a sort dgop can't apply itself, has to see every process.
-    readonly property bool needsFullProcessList: active && (searchText.length > 0 || DgopService.dgopSort() === "")
+    // A search, the Online filter, or a sort dgop can't apply itself, has to see every process.
+    readonly property bool needsFullProcessList: active && (searchText.length > 0 || onlineOnly || DgopService.dgopSort() === "")
     property bool holdsFullProcessList: false
     onNeedsFullProcessListChanged: {
         if (needsFullProcessList === holdsFullProcessList)
@@ -52,7 +51,9 @@ Rectangle {
         if (holdsFullProcessList)
             DgopService.releaseFullProcessList();
     }
-    onColumnsChanged: {
+    onColumnsChanged: reconcileSort()
+
+    function reconcileSort() {
         const sort = DgopService.currentSort;
         if (sort !== "name" && sort !== "pid" && !columns.includes(sort))
             DgopService.setSortBy("cpu");
@@ -117,7 +118,6 @@ Rectangle {
     }
 
     readonly property real nameMinWidth: Theme.fontSizeSmall * 16
-    // Columns that fit next to the name; the rightmost ones drop first in a narrow window.
     readonly property var visibleColumns: root.columns.map(id => ProcessColumns.COLUMNS.find(c => c.id === id)).filter(c => c)
     // Wider than the card when many columns are on: the whole table then scrolls sideways, the name keeps its minimum.
     readonly property real tableWidth: Math.max(root.width, (Theme.spacingS + Theme.spacingL) * 2 + root.leadWidth + root.nameMinWidth + visibleColumns.reduce((sum, c) => sum + root.columnWidth(c) + Theme.spacingXS * 2, 0))
@@ -280,7 +280,7 @@ Rectangle {
     // Once the strip has slid open, scroll it into view; a row near the bottom would otherwise open off screen.
     Timer {
         id: revealExpanded
-        interval: Theme.expressiveDurations.expressiveDefaultSpatial + 50
+        interval: Theme.expressiveDurations.expressiveDefaultSpatial
         onTriggered: {
             const index = root.cachedProcesses.findIndex(p => String(p.pid) === root.expandedPid);
             if (index >= 0)
@@ -390,7 +390,7 @@ Rectangle {
     }
 
     Component.onCompleted: {
-        onColumnsChanged();
+        reconcileSort();
         updateProcesses();
     }
 
@@ -412,49 +412,33 @@ Rectangle {
     onSortOrderChanged: Qt.callLater(refreshFilter)
 
     property real menuClosedAt: 0
+    readonly property bool contextMenuOpen: contextMenu?.visible ?? false
+
+    onContextMenuOpenChanged: {
+        if (!contextMenuOpen)
+            menuClosedAt = Date.now();
+    }
 
     Connections {
         target: root.contextMenu
-        function onVisibleChanged() {
-            if (!root.contextMenu.visible)
-                root.menuClosedAt = Date.now();
-        }
         function onProcessKilled() {
             root.expandedPid = "";
             root.forceRefresh(3);
         }
     }
 
-    Flickable {
+    DFlickable {
         id: tableScroll
         anchors.fill: parent
         anchors.topMargin: Theme.spacingS
         anchors.bottomMargin: Theme.spacingS
         contentWidth: root.tableWidth
         contentHeight: height
-        flickableDirection: Flickable.HorizontalFlick
-        boundsBehavior: Flickable.StopAtBounds
-        interactive: contentWidth > width
+        horizontal: true
+        interactive: overflows
         clip: true
 
         readonly property bool overflows: contentWidth > width
-
-        ScrollBar.horizontal: ScrollBar {
-            policy: tableScroll.overflows ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
-            padding: 0
-
-            contentItem: Rectangle {
-                implicitHeight: Theme.scrollbarThickness
-                radius: height / 2
-                color: parent.pressed ? Theme.primary : Theme.outline
-            }
-
-            background: Item {}
-        }
-
-        function scrollBy(delta) {
-            contentX = Math.max(0, Math.min(contentWidth - width, contentX - delta));
-        }
 
         ColumnLayout {
             width: root.tableWidth
@@ -522,14 +506,6 @@ Rectangle {
                 }
                 spacing: Theme.groupedListGap
                 currentIndex: root.selectedIndex
-                // Shift+wheel moves a table wider than the window sideways.
-                WheelHandler {
-                    target: null
-                    acceptedModifiers: Qt.ShiftModifier
-                    enabled: tableScroll.overflows
-                    onWheel: event => tableScroll.scrollBy(event.angleDelta.y || event.angleDelta.x)
-                }
-
                 add: null
                 remove: null
                 displaced: null

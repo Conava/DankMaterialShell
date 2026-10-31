@@ -3,8 +3,7 @@ import Quickshell
 import Quickshell.Io
 import qs.Common
 
-// Facts no service keeps, read once per refresh: compositor and toolkit versions, themes, packages, boot and
-// graphics stack (one read-only script), and the dms doctor summary.
+// Versions, themes, packages and boot facts no service keeps, read by one read-only script per refresh.
 Item {
     id: root
 

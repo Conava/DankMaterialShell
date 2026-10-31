@@ -8,7 +8,7 @@ import qs.Widgets
 import qs.DCommon.Widgets
 import qs.Modules.Settings.Widgets
 import "ProcessColumns.js" as ProcessColumns
-import "Connections.js" as Connections
+import "Connections.js" as Remotes
 import "../../Common/Format.js" as Format
 import "../../Services/SysmonDevices.js" as Devices
 
@@ -29,8 +29,8 @@ Rectangle {
     readonly property var parentProcess: (live?.ppid ?? 0) > 0 ? (DgopService.allProcesses ?? []).find(p => p.pid === live.ppid) ?? null : null
 
     property var detail: null
-    readonly property string unit: Connections.unescapeUnit(detail?.unit ?? "")
-    readonly property string unitKind: Connections.unitKind(unit)
+    readonly property string unit: Remotes.unescapeUnit(detail?.unit ?? "")
+    readonly property string unitKind: Remotes.unitKind(unit)
     readonly property var sandbox: detail?.sandbox ?? null
     readonly property var privileges: detail?.privileges ?? null
 
@@ -44,7 +44,7 @@ Rectangle {
         }
         return names;
     }
-    readonly property var connections: Connections.group(live?.remotes ?? [], tailscaleNames)
+    readonly property var connections: Remotes.group(live?.remotes ?? [], tailscaleNames)
     readonly property var listening: detail?.listening ?? []
     readonly property int connectionCount: (live?.connections ?? 0) + (live?.localConnections ?? 0)
     readonly property bool hasNetwork: connectionCount > 0 || listening.length > 0
@@ -84,7 +84,7 @@ Rectangle {
     signal actionRequested(string action)
 
     function cell(id) {
-        return ProcessColumns.formatCell(id, live ?? ({}), false) ?? "—";
+        return ProcessColumns.formatCell(id, live ?? ({})) ?? "—";
     }
 
     function bytes(v) {
@@ -107,7 +107,6 @@ Rectangle {
         };
     }
 
-    // A row whose missing value means "not readable", shown as a dash with the reason.
     function known(label, value) {
         return value === null || value === undefined || value === "" ? row(label, "—", unreadableTip) : row(label, value);
     }
@@ -139,7 +138,7 @@ Rectangle {
                     "value": c.service,
                     "tooltip": c.name !== c.host ? c.host : ""
                 })).concat(list.length > 5 ? [{
-                        "label": I18n.tr("+ %1 more", "overflow line, %1 is a count of hidden items").arg(list.length - 5),
+                        "label": I18n.tr("+ %1 more").arg(list.length - 5),
                         "value": " "
                     }] : []);
     }
@@ -218,7 +217,6 @@ Rectangle {
         }
     }
 
-    // A titled grouped list; rows are {label, value, tooltip}, rows without a value are left out.
     component Section: Column {
         id: section
 
@@ -421,7 +419,7 @@ Rectangle {
 
             InfoChip {
                 iconName: "web_asset"
-                text: root.windows.length === 0 ? "" : root.windows.length === 1 ? I18n.tr("%1 window", "singular, %1 is 1, open windows in the system monitor").arg(1) : I18n.tr("%1 windows", "plural, %1 is a count of open windows in the system monitor").arg(root.windows.length)
+                text: root.windows.length === 0 ? "" : root.windows.length === 1 ? I18n.tr("%1 window").arg(1) : I18n.tr("%1 windows").arg(root.windows.length)
                 tip: root.windows.map(w => w.title ?? "").filter(t => t).join("\n")
             }
 
@@ -455,7 +453,6 @@ Rectangle {
             columnSpacing: Theme.spacingL
             rowSpacing: Theme.spacingL
 
-            // Overview: what most people look for.
             Section {
                 visible: root.currentTab === "overview"
                 Layout.preferredWidth: grid.cellWidth
@@ -470,7 +467,6 @@ Rectangle {
                 rows: [root.row(I18n.tr("Memory"), root.cell("memory")), root.known(I18n.tr("Read total", "total data read"), root.bytes(root.detail?.readTotal)), root.known(I18n.tr("Written total", "total data written"), root.bytes(root.detail?.writeTotal)), root.known(I18n.tr("Connections", "process column: number of open internet connections"), root.live?.connections == null ? null : root.connectionCount)]
             }
 
-            // Resources: every number dgop has about CPU, memory, disk and GPU use.
             Section {
                 visible: root.currentTab === "resources"
                 Layout.preferredWidth: grid.cellWidth
@@ -495,7 +491,7 @@ Rectangle {
                 Layout.alignment: Qt.AlignTop
                 title: I18n.tr("Disk")
                 iconName: "hard_drive"
-                rows: [root.row(ProcessListMetrics.columnLabel("diskRead"), ProcessColumns.formatCell("diskRead", root.live ?? ({}), false)), root.row(ProcessListMetrics.columnLabel("diskWrite"), ProcessColumns.formatCell("diskWrite", root.live ?? ({}), false)), root.known(I18n.tr("Read total", "total data read"), root.bytes(root.detail?.readTotal)), root.known(I18n.tr("Written total", "total data written"), root.bytes(root.detail?.writeTotal))]
+                rows: [root.row(ProcessListMetrics.columnLabel("diskRead"), ProcessColumns.formatCell("diskRead", root.live ?? ({}))), root.row(ProcessListMetrics.columnLabel("diskWrite"), ProcessColumns.formatCell("diskWrite", root.live ?? ({}))), root.known(I18n.tr("Read total", "total data read"), root.bytes(root.detail?.readTotal)), root.known(I18n.tr("Written total", "total data written"), root.bytes(root.detail?.writeTotal))]
             }
 
             Section {
@@ -504,16 +500,15 @@ Rectangle {
                 Layout.alignment: Qt.AlignTop
                 title: I18n.tr("GPU")
                 iconName: "gpu"
-                rows: [root.row(I18n.tr("Usage", "chart legend: CPU or GPU utilization"), ProcessColumns.formatCell("gpu", root.live ?? ({}), false)), root.row(ProcessListMetrics.columnLabel("gpuVideo"), ProcessColumns.formatCell("gpuVideo", root.live ?? ({}), false)), root.row(I18n.tr("VRAM", "GPU video memory"), ProcessColumns.formatCell("vram", root.live ?? ({}), false)), root.row(I18n.tr("Shared memory", "GPU memory borrowed from system RAM (GTT)"), root.live?.gpuGttKB != null ? root.kb(root.live.gpuGttKB) : null)]
+                rows: [root.row(I18n.tr("Usage", "chart legend: CPU or GPU utilization"), ProcessColumns.formatCell("gpu", root.live ?? ({}))), root.row(ProcessListMetrics.columnLabel("gpuVideo"), ProcessColumns.formatCell("gpuVideo", root.live ?? ({}))), root.row(I18n.tr("VRAM", "GPU video memory"), ProcessColumns.formatCell("vram", root.live ?? ({}))), root.row(I18n.tr("Shared memory", "GPU memory borrowed from system RAM (GTT)"), root.live?.gpuGttKB != null ? root.kb(root.live.gpuGttKB) : null)]
             }
 
-            // Network: connections by kind, then the ports the process listens on.
             Section {
                 visible: root.currentTab === "network" && shown.length > 0
                 Layout.columnSpan: root.otherNetwork ? 1 : grid.columns
                 Layout.preferredWidth: root.otherNetwork ? grid.cellWidth : grid.width
                 Layout.alignment: Qt.AlignTop
-                title: I18n.tr("Internet", "connections to public internet addresses")
+                title: I18n.tr("Internet")
                 iconName: "public"
                 rows: root.connectionRows(root.connections.internet)
             }
@@ -543,18 +538,17 @@ Rectangle {
                     width: parent.width
                     title: I18n.tr("Listening", "network ports a process accepts connections on")
                     iconName: "sensors"
-                    rows: root.listening.map(l => root.row(Connections.service(l.port, l.protocol) === String(l.port) ? String(l.port) : l.port + " (" + Connections.service(l.port, l.protocol) + ")", l.protocol.toUpperCase(), l.address))
+                    rows: root.listening.map(l => root.row(Remotes.service(l.port, l.protocol) === String(l.port) ? String(l.port) : l.port + " (" + Remotes.service(l.port, l.protocol) + ")", l.protocol.toUpperCase(), l.address))
                 }
             }
 
-            // Details: who and where the process is.
             Section {
                 visible: root.currentTab === "details"
                 Layout.preferredWidth: grid.cellWidth
                 Layout.alignment: Qt.AlignTop
                 title: I18n.tr("Process", "section title: details of one process")
                 iconName: "info"
-                rows: [root.row(I18n.tr("User"), root.live?.username), root.row(I18n.tr("Status"), root.live?.status ? ProcessListMetrics.statusLabel(root.live.status) : null), root.row("UID", root.detail?.uid), root.row(I18n.tr("Group"), root.detail?.group ? root.detail.group + " (" + root.detail.gid + ")" : root.detail?.gid), root.row(I18n.tr("Started", "when a process was started"), root.started ? root.started.toLocaleString(Qt.locale(), Locale.ShortFormat) : null), root.row(I18n.tr("Parents", "chain of processes that started this one"), root.parentChain), root.row(I18n.tr("Terminal", "controlling terminal of a process"), root.detail?.tty), root.row(I18n.tr("Session", "login session id of a process"), root.detail?.session), root.row(I18n.tr("Setuid", "process runs with another user's rights"), root.privileges?.setuid ? I18n.tr("Yes") : null)]
+                rows: [root.row(I18n.tr("User"), root.live?.username), root.row(I18n.tr("Status"), root.live?.status ? ProcessListMetrics.statusLabel(root.live.status) : null), root.row("UID", root.detail?.uid), root.row(I18n.tr("Group"), root.detail?.group ? root.detail.group + " (" + root.detail.gid + ")" : root.detail?.gid), root.row(I18n.tr("Started", "when a process was started"), root.started ? root.started.toLocaleString(Qt.locale(), Locale.ShortFormat) : null), root.row(I18n.tr("Parents", "chain of processes that started this one"), root.parentChain), root.row(I18n.tr("Terminal"), root.detail?.tty), root.row(I18n.tr("Session", "login session id of a process"), root.detail?.session), root.row(I18n.tr("Setuid", "process runs with another user's rights"), root.privileges?.setuid ? I18n.tr("Yes") : null)]
             }
 
             Section {
@@ -592,7 +586,7 @@ Rectangle {
 
                 StyledText {
                     leftPadding: Theme.spacingXS
-                    text: I18n.tr("Command", "noun, the full command line of a process")
+                    text: I18n.tr("Command")
                     font.pixelSize: Theme.fontSizeSmall
                     color: Theme.primary
                 }

@@ -12,6 +12,7 @@ Column {
 
     property var drive: null
     property bool collapsed: true
+    property bool wanted: false
 
     // "idle" | "running" | "done" | "error"
     property string state_: "idle"
@@ -65,8 +66,12 @@ Column {
         });
     }
 
-    onUnlockedChanged: run()
-    Component.onCompleted: run()
+    // Read when the card is open, not for every drive at once: smartctl wakes a sleeping disk.
+    readonly property bool shouldRun: unlocked && wanted && !!drive?.device
+    onShouldRunChanged: {
+        if ((shouldRun && state_ === "idle") || !unlocked)
+            run();
+    }
 
     visible: state_ !== "idle"
     spacing: Theme.spacingS

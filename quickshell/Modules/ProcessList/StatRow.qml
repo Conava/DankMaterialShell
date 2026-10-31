@@ -2,7 +2,6 @@ import QtQuick
 import qs.Common
 import qs.DCommon.Widgets
 
-// One label/value line inside a SettingsGroup; the group paints the row and its corners.
 Item {
     id: root
 

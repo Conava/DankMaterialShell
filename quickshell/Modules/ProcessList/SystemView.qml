@@ -33,7 +33,15 @@ Item {
         id: facts
     }
 
-    Component.onCompleted: facts.refresh()
+    // visible starts true when the tab is already current, so the bound handler alone would miss the first show.
+    Component.onCompleted: {
+        if (visible)
+            facts.refresh();
+    }
+    onVisibleChanged: {
+        if (visible && !facts.loaded)
+            facts.refresh();
+    }
 
     readonly property var f: facts.facts
     readonly property var cpuInfo: DgopService.cpuInfo
@@ -219,7 +227,6 @@ Item {
                     }] : []));
     }
 
-    // What any bug report needs first: versions, platform, CPU, GPU stack and displays.
     function summaryText() {
         return SystemInfo.summary([["DMS " + ShellVersionService.shellVersion, f.qs ? "Quickshell " + SystemInfo.version(f.qs) : "", compositorText].filter(x => x.trim() !== "" && x !== "DMS ").join(" · "), [DgopService.distribution, kernelText ? "Linux " + kernelText : "", f.session === "wayland" ? "Wayland" + (f.uwsm ? " (uwsm)" : "") : ""].filter(x => x).join(" · "), [DgopService.cpuModel, memoryText].filter(x => x).join(" · "), gpus.map(g => g.displayName).join(", ") + (graphicsDriver ? " (" + graphicsDriver + ")" : ""), displays.map(d => d.value).join("; "), doctorText && !facts.doctorRunning ? I18n.tr("System check") + ": " + doctorText : ""]);
     }
@@ -285,7 +292,7 @@ Item {
 
                     GridLayout {
                         Layout.fillWidth: true
-                        columns: width >= 640 ? 2 : 1
+                        columns: width >= SettingsMetrics.compactBreakpoint ? 2 : 1
                         columnSpacing: Theme.spacingL
                         rowSpacing: Theme.spacingL
 
@@ -305,7 +312,7 @@ Item {
             GridLayout {
                 id: sectionGrid
                 Layout.fillWidth: true
-                columns: width >= 640 ? 2 : 1
+                columns: width >= SettingsMetrics.compactBreakpoint ? 2 : 1
                 columnSpacing: Theme.spacingL
                 rowSpacing: Theme.spacingXL
 
@@ -316,13 +323,14 @@ Item {
                     spacing: Theme.spacingXL
 
                     Repeater {
-                        model: sectionGrid.columns === 2 ? [0, 3, 4, 6].map(i => root.sections[i]) : root.sections
+                        model: sectionGrid.columns === 2 ? [0, 3, 4, 6] : [0, 1, 2, 3, 4, 5, 6]
 
                         Section {
-                            required property var modelData
-                            title: modelData.title
-                            iconName: modelData.icon
-                            rows: modelData.rows
+                            required property int modelData
+                            readonly property var section: root.sections[modelData]
+                            title: section.title
+                            iconName: section.icon
+                            rows: section.rows
                         }
                     }
                 }
@@ -335,13 +343,14 @@ Item {
                     spacing: Theme.spacingXL
 
                     Repeater {
-                        model: sectionGrid.columns === 2 ? [1, 2, 5].map(i => root.sections[i]) : []
+                        model: sectionGrid.columns === 2 ? [1, 2, 5] : []
 
                         Section {
-                            required property var modelData
-                            title: modelData.title
-                            iconName: modelData.icon
-                            rows: modelData.rows
+                            required property int modelData
+                            readonly property var section: root.sections[modelData]
+                            title: section.title
+                            iconName: section.icon
+                            rows: section.rows
                         }
                     }
                 }
@@ -408,14 +417,15 @@ Item {
         customPaddingH: Theme.spacingL
 
         Repeater {
-            model: rowsGroup.shown
+            model: rowsGroup.shown.length
 
             StatRow {
-                required property var modelData
-                label: modelData.label
-                value: modelData.value
-                loading: modelData.loading === true
-                tooltip: modelData.tooltip ?? ""
+                required property int index
+                readonly property var row: rowsGroup.shown[index]
+                label: row.label
+                value: row.value
+                loading: row.loading === true
+                tooltip: row.tooltip ?? ""
             }
         }
     }
@@ -452,12 +462,13 @@ Item {
         customPaddingH: Theme.spacingL
 
         Repeater {
-            model: group.rows
+            model: group.rows.length
 
             Item {
                 id: sensor
 
-                required property var modelData
+                required property int index
+                readonly property var modelData: group.rows[index]
 
                 height: Theme.iconButtonSize
 
@@ -478,7 +489,7 @@ Item {
                     anchors.right: valueText.left
                     anchors.rightMargin: Theme.spacingM
                     anchors.verticalCenter: parent.verticalCenter
-                    width: Math.min(120, sensor.width / 4)
+                    width: Math.min(Theme.fontSizeSmall * 10, sensor.width / 4)
                     height: Theme.spacingS
                     radius: height / 2
                     color: Theme.surfaceContainerHighest

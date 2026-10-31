@@ -1,11 +1,9 @@
 package drives
 
 import (
-	"bufio"
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strings"
 
 	"github.com/duxlabs-dev/dux-shell/core/internal/distros"
 )
@@ -35,27 +33,10 @@ func smartctlPath() string {
 	return ""
 }
 
-func installCommand(root string) string {
-	// An rpm-ostree system can't install packages with dnf.
-	if _, err := os.Stat(filepath.Join(root, "run", "ostree-booted")); err == nil {
+func installCommand() string {
+	info, err := distros.GetOSInfo()
+	if err != nil || info.Immutable {
 		return ""
 	}
-	f, err := os.Open(filepath.Join(root, "etc", "os-release"))
-	if err != nil {
-		return ""
-	}
-	defer f.Close()
-	scanner := bufio.NewScanner(f)
-	for scanner.Scan() {
-		k, v, ok := strings.Cut(scanner.Text(), "=")
-		if !ok || k != "ID" {
-			continue
-		}
-		cfg, ok := distros.Registry[strings.Trim(v, "\"'")]
-		if !ok {
-			return ""
-		}
-		return installCommands[cfg.Family]
-	}
-	return ""
+	return installCommands[distros.Registry[info.Distribution.ID].Family]
 }

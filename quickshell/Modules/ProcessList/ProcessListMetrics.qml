@@ -64,6 +64,14 @@ Singleton {
             "cache": new Map()
         })
 
+    Connections {
+        target: DgopService
+        function onPollingActiveChanged() {
+            if (!DgopService.pollingActive)
+                _appMemo.cache = new Map();
+        }
+    }
+
     function appEntry(process, extraKeys) {
         const windowId = windowAppIds[process?.pid];
         const memo = _appMemo;

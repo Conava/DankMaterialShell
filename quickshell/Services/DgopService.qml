@@ -500,6 +500,7 @@ Singleton {
         id: helper
 
         property bool ready: false
+        property string lastError: ""
 
         command: ["pkexec", Proc.dmsBin, "sysmon-helper"]
         stdinEnabled: true
@@ -511,7 +512,6 @@ Singleton {
                 "method": "dgop.modules"
             }) + "\n");
         }
-        property string lastError: ""
 
         onExited: (code, status) => {
             // pkexec exits 126 when the password prompt is dismissed; anything else before ready is a real failure.

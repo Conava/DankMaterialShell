@@ -66,7 +66,6 @@ function sensorRows(sensors, drives, gpus, names, fahrenheit) {
     return rows.map((r, i) => [r, i]).sort((a, b) => rank(a[0].kind) - rank(b[0].kind) || a[1] - b[1]).map(x => x[0]);
 }
 
-// Plain-text copy: one "Label: value" line per row, sections separated by a blank line.
 // First version-looking token: "Hyprland 0.56.2 built from …" -> "0.56.2".
 function version(text) {
     const m = /\d+\.\d+(?:\.\d+)?/.exec(String(text || ""));
@@ -79,7 +78,7 @@ function packagesText(facts) {
 }
 
 function mesaVersion(facts) {
-    const m = /Mesa (\d+\.\d+(?:\.\d+)?)/.exec(((facts || {})["vk.info"] || "") + " " + ((facts || {}).gl || ""));
+    const m = /Mesa (\d+\.\d+(?:\.\d+)?)/.exec((facts || {}).gl || "");
     return m ? m[1] : "";
 }
 

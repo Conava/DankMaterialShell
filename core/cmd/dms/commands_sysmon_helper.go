@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -21,9 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// The system monitor starts this through pkexec when the user unlocks it, so other users' processes can be read
-// and ended. It only reads dgop data and SMART reports and runs the three process actions below; it exits when
-// stdin closes.
+// Started through pkexec when the system monitor is unlocked; exits when stdin closes.
 var sysmonHelperCmd = &cobra.Command{
 	Use:    "sysmon-helper",
 	Short:  "Privileged process reader for the system monitor (started through pkexec)",
@@ -35,13 +34,14 @@ var sysmonHelperCmd = &cobra.Command{
 	},
 }
 
+const restartTimeout = 60 * time.Second
+
 type helperRequest struct {
 	ID     int            `json:"id"`
 	Method string         `json:"method"`
 	Params map[string]any `json:"params"`
 }
 
-// serveSysmonHelper answers one JSON request per line until in closes.
 func serveSysmonHelper(in io.Reader, out io.Writer, call func(string, map[string]any) (any, error)) {
 	var mu sync.Mutex
 	var wg sync.WaitGroup
@@ -105,11 +105,13 @@ func sysmonHelperCall(method string, p map[string]any) (any, error) {
 		if !strings.HasSuffix(unit, ".service") || strings.HasPrefix(unit, "-") {
 			return nil, errors.New("not a service")
 		}
-		mainPid, err := exec.Command("systemctl", "show", "-p", "MainPID", "--value", "--", unit).Output()
+		ctx, cancel := context.WithTimeout(context.Background(), restartTimeout)
+		defer cancel()
+		mainPid, err := exec.CommandContext(ctx, "systemctl", "show", "-p", "MainPID", "--value", "--", unit).Output()
 		if err != nil || strings.TrimSpace(string(mainPid)) != strconv.Itoa(pid) {
 			return nil, errors.New("not the main process of " + unit)
 		}
-		return true, exec.Command("systemctl", "restart", "--", unit).Run()
+		return true, exec.CommandContext(ctx, "systemctl", "restart", "--", unit).Run()
 	case "drives.smart":
 		return drives.FullReport(params.StringOpt(p, "device", ""))
 	}
@@ -167,8 +169,11 @@ func readParents() map[int]int {
 		}
 		s := string(data)
 		i := strings.LastIndexByte(s, ')')
+		if i < 0 {
+			continue
+		}
 		fields := strings.Fields(s[i+1:])
-		if i < 0 || len(fields) < 2 {
+		if len(fields) < 2 {
 			continue
 		}
 		if ppid, err := strconv.Atoi(fields[1]); err == nil {

@@ -3,7 +3,6 @@ import qs.Common
 import qs.Widgets
 import qs.DCommon.Widgets
 
-// The title bar of a section that folds away; the whole bar toggles it.
 Item {
     id: root
 

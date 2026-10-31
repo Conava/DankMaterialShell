@@ -3,7 +3,6 @@ import qs.Common
 import qs.DCommon.Widgets
 
 // Confirms a process action. Parent it to an item that covers the window; focus returns to the opener on close.
-// For a critical process the dialog warns and makes restarting the recommended (filled) choice.
 Loader {
     id: root
 

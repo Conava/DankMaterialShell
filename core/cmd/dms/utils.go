@@ -14,7 +14,6 @@ func disableMemProfilingUnlessRequested() {
 	runtime.MemProfileRate = 0
 }
 
-// firstArg returns the first non-flag argument, or "".
 func firstArg(args []string) string {
 	for _, arg := range args[1:] {
 		if !strings.HasPrefix(arg, "-") {
@@ -34,8 +33,7 @@ func isReadOnlyCommand(args []string) bool {
 	return false
 }
 
-// isRootHelper reports whether args run the system monitor's sysmon-helper,
-// which is meant to run as root (it is started through pkexec).
+// sysmon-helper is started through pkexec and has to run as root.
 func isRootHelper(args []string) bool {
 	return firstArg(args) == "sysmon-helper"
 }

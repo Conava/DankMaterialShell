@@ -11,7 +11,6 @@ CcSheetDialog {
 
     signal columnsEdited(var columns)
 
-    // Grouped columns share one toggle.
     readonly property var entries: [["cpu"], ["memory"], ["gpu"], ["vram"], ["gpuVideo"], ["diskRead", "diskWrite"], ["connections", "netRx", "netTx"], ["status"], ["threads"], ["nice"], ["cpuTime"], ["pid"], ["user"]]
 
     function setEntry(ids, on) {

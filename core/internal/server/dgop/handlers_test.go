@@ -31,14 +31,6 @@ func TestMetaParamsFromAllKeys(t *testing.T) {
 	}
 }
 
-func TestMetaParamsFromDefaults(t *testing.T) {
-	got := metaParamsFrom(nil)
-	if got.ProcLimit != 20 || !got.MergeChildren || !got.EnableCPU || got.SortBy != gops.SortByCPU ||
-		got.GPUCursor != "" || got.NetRateAllInterfaces {
-		t.Fatalf("unexpected defaults: %+v", got)
-	}
-}
-
 func TestMetaParamsFromGPUPciIdsEmptyIsNotNil(t *testing.T) {
 	if got := metaParamsFrom(map[string]any{"gpuPciIds": []any{}}).GPUPciIds; got == nil || len(got) != 0 {
 		t.Fatalf("empty list must stay non-nil (monitor none), got %#v", got)

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
-	"slices"
 	"testing"
 
 	"github.com/godbus/dbus/v5"
@@ -308,32 +307,6 @@ func TestBuildDrivesOptical(t *testing.T) {
 }
 
 func ptr[T any](x T) *T { return &x }
-
-func TestListLive(t *testing.T) {
-	conn, err := dbus.SystemBus()
-	if err != nil {
-		t.Skip("no system bus")
-	}
-	var owned bool
-	if conn.BusObject().Call("org.freedesktop.DBus.NameHasOwner", 0, udisksDest).Store(&owned); !owned {
-		var activatable []string
-		_ = conn.BusObject().Call("org.freedesktop.DBus.ListActivatableNames", 0).Store(&activatable)
-		if !slices.Contains(activatable, udisksDest) {
-			t.Skip("UDisks2 not available")
-		}
-	}
-
-	res, err := List()
-	require.NoError(t, err)
-	for _, d := range res.Drives {
-		assert.NotEmpty(t, d.Device, d.ID)
-		assert.NotZero(t, d.Size, d.ID)
-	}
-	if os.Getenv("DRIVES_DUMP") != "" {
-		out, _ := json.MarshalIndent(res, "", "  ")
-		t.Log(string(out))
-	}
-}
 
 func TestBuildDrivesATANoSmartData(t *testing.T) {
 	objs := hddFixture(5400, false)

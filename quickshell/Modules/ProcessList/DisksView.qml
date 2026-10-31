@@ -59,15 +59,13 @@ Item {
             }
 
             Repeater {
-                model: root.drives
+                model: root.drives.length
 
                 DriveCard {
-                    required property var modelData
-
                     required property int index
                     Layout.fillWidth: true
                     expanded: index === 0
-                    drive: modelData
+                    drive: root.drives[index]
                     mounts: root.mounts
                     onInstallRequested: DriveService.install()
                 }
@@ -94,7 +92,7 @@ Item {
                             readonly property color usageColor: usedPct > 0.95 ? Theme.error : usedPct > 0.85 ? Theme.warning : Theme.primary
 
                             width: parent.width
-                            height: 52
+                            height: Theme.listItemHeight
 
                             RowLayout {
                                 anchors.fill: parent
@@ -119,18 +117,18 @@ Item {
                                         text: (mountRow.modelData?.device ?? "") + " • " + (mountRow.modelData?.fstype ?? "")
                                         wrapMode: Text.NoWrap
                                         elide: Text.ElideRight
-                                        font.pixelSize: Theme.fontSizeSmall - 2
+                                        font.pixelSize: Theme.fontSizeXSmall
                                         color: Theme.surfaceVariantText
                                     }
                                 }
 
                                 Column {
-                                    Layout.preferredWidth: 180
+                                    Layout.preferredWidth: Theme.fontSizeSmall * 15
                                     spacing: Theme.spacingXS
 
                                     Rectangle {
                                         width: parent.width
-                                        height: 8
+                                        height: Theme.spacingS
                                         radius: Theme.fullRadius(width, height)
                                         color: Theme.outlineHeavy
 
@@ -145,13 +143,13 @@ Item {
                                     StyledText {
                                         anchors.right: parent.right
                                         text: (mountRow.modelData?.used ?? "") + " / " + (mountRow.modelData?.size ?? "")
-                                        font.pixelSize: Theme.fontSizeSmall - 2
+                                        font.pixelSize: Theme.fontSizeXSmall
                                         color: Theme.surfaceVariantText
                                     }
                                 }
 
                                 StyledText {
-                                    Layout.preferredWidth: 50
+                                    Layout.preferredWidth: Theme.fontSizeSmall * 4
                                     text: mountRow.modelData?.percent ?? ""
                                     font.pixelSize: Theme.fontSizeSmall
                                     font.weight: Theme.fontWeightMedium

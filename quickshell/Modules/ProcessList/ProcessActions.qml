@@ -10,7 +10,6 @@ Singleton {
 
     // Ending one of these takes the desktop down.
     readonly property var sessionNames: ["systemd", "(sd-pam)", "sd-pam", "dbus-broker", "dbus-broker-launch", "dbus-daemon"].concat(Object.keys(reloadCommands))
-    // Skipped, with their subtrees, when ending a process tree.
     readonly property var treeSkipNames: sessionNames.concat(["qs", "quickshell", "dms"])
     // Compositors can't restart in place; "restart" reloads their config. Empty entries have no reload command.
     readonly property var reloadCommands: ({
@@ -44,7 +43,6 @@ Singleton {
         return (process?.username ?? "") === UserInfoService.username;
     }
 
-    // This shell (qs) or its backend (dms run).
     function isDms(process) {
         return (process?.pid ?? 0) === Quickshell.processId || (name(process) === "dms" && isOwn(process));
     }

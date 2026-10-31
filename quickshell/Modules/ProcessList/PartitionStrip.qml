@@ -8,7 +8,6 @@ import qs.DCommon.Widgets
 import "../../Common/Format.js" as Format
 import "Drives.js" as Drives
 
-// A drive's partitions side by side, sized by partition, each filled to its used space.
 Item {
     id: stripRow
 
