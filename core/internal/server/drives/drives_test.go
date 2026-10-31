@@ -273,12 +273,17 @@ func TestBuildDrivesWithoutSmart(t *testing.T) {
 		bdPath + "sdc":     block("/dev/sdc", drvPath+"reader", 0, nil),
 		// drive object without any whole-disk block
 		drvPath + "orphan": {ifaceDrive: {"Id": v("orphan"), "Size": v(uint64(1))}},
+		// NVMe whose Drive.Size UDisks reports as 0
+		drvPath + "Micron": {ifaceDrive: {"Id": v("Micron"), "Size": v(uint64(0)), "RotationRate": v(int32(0))}},
+		bdPath + "nvme0n1": block("/dev/nvme0n1", drvPath+"Micron", 2048408248320, nil),
 	}
 
 	drives := buildDrives(objs, nil, nil, nil, map[string]ATASmart{})
 
-	require.Len(t, drives, 1)
-	d := drives[0]
+	require.Len(t, drives, 2)
+	assert.Equal(t, "nvme0n1", drives[0].Name)
+	assert.Equal(t, uint64(2048408248320), drives[0].Size)
+	d := drives[1]
 	assert.Equal(t, "usb", d.ConnectionBus)
 	assert.True(t, d.Removable)
 	assert.Empty(t, d.Health)

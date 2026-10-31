@@ -150,7 +150,11 @@ func buildDrives(objects objectMap, nvmeAttrs map[dbus.ObjectPath]map[string]dbu
 		if !ok {
 			continue
 		}
+		// UDisks leaves Drive.Size at 0 for some NVMe drives; the whole-disk block knows it.
 		size, _ := uintProp(props, "Size")
+		if size == 0 {
+			size, _ = uintProp(objects[blockPath][ifaceBlock], "Size")
+		}
 		if size == 0 {
 			continue
 		}

@@ -470,9 +470,12 @@ Singleton {
     property var _helperCallbacks: ({})
     property int _helperNextId: 1
 
+    // lock() closes stdin; a closed channel is not reopened by a later start, so turn it back on first.
     function unlock() {
-        if (!helper.running)
-            helper.running = true;
+        if (helper.running)
+            return;
+        helper.stdinEnabled = true;
+        helper.running = true;
     }
 
     function lock() {
@@ -506,7 +509,6 @@ Singleton {
         stdinEnabled: true
         onStarted: {
             ready = false;
-            stdinEnabled = true;
             write(JSON.stringify({
                 "id": 0,
                 "method": "dgop.modules"

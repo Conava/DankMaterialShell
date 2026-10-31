@@ -11,7 +11,6 @@ import "Drives.js" as Drives
 Item {
     id: root
 
-
     readonly property var drives: DriveService.drives ?? []
     readonly property bool hasDrives: drives.length > 0
     readonly property var mounts: DgopService.diskMounts ?? []
@@ -78,7 +77,7 @@ Item {
                 expanded: !root.hasDrives
 
                 Column {
-                    width: parent.width
+                    Layout.fillWidth: true
                     spacing: Theme.spacingXS
 
                     Repeater {

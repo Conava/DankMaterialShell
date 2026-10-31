@@ -244,7 +244,7 @@ Rectangle {
                     iconName: "content_copy"
                     iconColor: Theme.surfaceText
                     tooltipText: I18n.tr("Copy")
-                    onClicked: Quickshell.execDetached(["dms", "cl", "copy", root.cardText()])
+                    onClicked: Quickshell.execDetached(["dms", "cl", "copy", "--", root.cardText()])
                 }
 
                 DActionButton {
