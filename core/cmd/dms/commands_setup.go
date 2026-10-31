@@ -130,7 +130,7 @@ var dmsConfigSpecs = map[string]dmsConfigSpec{
 		mangoFile:    "layout.conf",
 		niriContent:  func(_ string) string { return config.NiriLayoutConfig },
 		hyprContent:  func(_ string) string { return config.DMSLayoutLuaConfig },
-		mangoContent: func(_ string) string { return mangoconf.Detect().Translate(config.MangoLayoutConfig) },
+		mangoContent: func(_ string) string { return config.MangoLayoutConfig },
 	},
 	"colors": {
 		niriFile:     "colors.kdl",
@@ -138,7 +138,7 @@ var dmsConfigSpecs = map[string]dmsConfigSpec{
 		mangoFile:    "colors.conf",
 		niriContent:  func(_ string) string { return config.NiriColorsConfig },
 		hyprContent:  func(_ string) string { return config.DMSColorsLuaConfig },
-		mangoContent: func(_ string) string { return mangoconf.Detect().Translate(config.MangoColorsConfig) },
+		mangoContent: func(_ string) string { return config.MangoColorsConfig },
 	},
 	"alttab": {
 		niriFile:    "alttab.kdl",
@@ -563,10 +563,7 @@ func compositorPrimaryPaths(wm deps.WindowManager) []string {
 	case deps.WindowManagerNiri:
 		return []string{filepath.Join(homeDir, ".config", "niri", "config.kdl")}
 	case deps.WindowManagerHyprland:
-		return []string{
-			filepath.Join(homeDir, ".config", "hypr", "hyprland.lua"),
-			filepath.Join(homeDir, ".config", "hypr", "hyprland.conf"),
-		}
+		return []string{filepath.Join(config.HyprlandConfigDir(), "hyprland.lua")}
 	case deps.WindowManagerMango:
 		return []string{
 			filepath.Join(homeDir, ".config", "mango", "config.conf"),

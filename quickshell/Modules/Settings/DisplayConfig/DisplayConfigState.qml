@@ -376,7 +376,7 @@ Singleton {
                             parsed = OutputModel.parseNiriOutputs(content);
                             break;
                         case "hyprland":
-                            parsed = OutputModel.parseHyprlandOutputs(content);
+                            parsed = OutputModel.parseHyprlandConfProfile(content);
                             break;
                         case "dwl":
                         case "mango":
@@ -587,13 +587,13 @@ Singleton {
     }
 
     function applyConfigEntry(configEntry, configId, profileName, isManual) {
-        if (CompositorService.isHyprland && readOnly) {
+        if (readOnly) {
             if (isManual) {
                 profilesLoading = false;
                 manualActivation = false;
                 profileError(I18n.tr("Hyprland conf mode is read-only in Settings"));
             }
-            showHyprlandReadOnlyWarning();
+            include.showReadOnlyWarning();
             return;
         }
         const onWriteFailed = () => {
@@ -766,7 +766,7 @@ Singleton {
             if (!match) {
                 profilesLoading = false;
                 manualActivation = false;
-                profileError(I18n.tr("Profile not found in monitors.json"));
+                profileError(I18n.tr("Profile not found in %1", "display profile error, %1 is the profiles file").arg("monitors.json"));
                 return;
             }
             applyConfigEntry(match.entry, profileId, match.entry.name || profileId, true);
@@ -1149,10 +1149,6 @@ Singleton {
         WlrOutputService.requestState();
     }
 
-    function showHyprlandReadOnlyWarning() {
-        ToastService.showWarning(I18n.tr("Hyprland conf mode"), I18n.tr("This install is still using hyprland.conf. Run dms setup to migrate before changing these settings."), "dms setup", "display-config");
-    }
-
     function buildOutputsMap() {
         const liveMonitors = {};
         for (const output of wlrOutputs) {
@@ -1200,7 +1196,7 @@ Singleton {
         case "hyprland":
             {
                 if (readOnly) {
-                    showHyprlandReadOnlyWarning();
+                    include.showReadOnlyWarning();
                     finish(false);
                     return;
                 }
@@ -1281,7 +1277,7 @@ Singleton {
                     };
                     config.transform = OutputModel.niriTransform(output.logical.transform);
                 }
-                if (settings.vrrOnDemand !== undefined)
+                if (settings.vrrOnDemand)
                     config.vrrOnDemand = settings.vrrOnDemand;
                 else if (output.vrr_enabled !== undefined)
                     config.vrr = output.vrr_enabled;
@@ -1611,8 +1607,8 @@ Singleton {
     function applyChanges() {
         if (!hasPendingChanges)
             return;
-        if (CompositorService.isHyprland && readOnly) {
-            showHyprlandReadOnlyWarning();
+        if (readOnly) {
+            include.showReadOnlyWarning();
             return;
         }
         const changeDescriptions = [];

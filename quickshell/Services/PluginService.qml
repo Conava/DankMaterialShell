@@ -94,7 +94,8 @@ Singleton {
     }
 
     Component.onCompleted: {
-        userWatcher.folder = Paths.toFileUrl(root.pluginDirectory);
+        // A FolderListModel never given a folder lists the working directory.
+        userWatcher.folder = AdminPolicy.disableUserPlugins ? "" : Paths.toFileUrl(root.pluginDirectory);
         systemWatcher.folder = Paths.toFileUrl(root.systemPluginDirectory);
         Qt.callLater(resyncAll);
         Qt.callLater(checkPluginDirectoryExists);
@@ -150,7 +151,7 @@ Singleton {
     }
 
     function resyncAll() {
-        const userList = snapshotModel(userWatcher, "user");
+        const userList = AdminPolicy.disableUserPlugins ? [] : snapshotModel(userWatcher, "user");
         const sysList = snapshotModel(systemWatcher, "system");
         const seenPaths = {};
         const modifiedTimes = {};
@@ -308,8 +309,21 @@ Singleton {
         }
     }
 
-    function _stripDotSlash(p) {
-        return p.startsWith("./") ? p.slice(2) : p;
+    function _pluginFilePath(dir, rel) {
+        if (!rel)
+            return "";
+        const path = String(rel);
+        let decoded;
+        try {
+            decoded = decodeURIComponent(path);
+        } catch (e) {
+            decoded = "..";
+        }
+        if (decoded.split("/").includes("..")) {
+            log.warn("plugin path outside its directory, refusing:", path, "in", dir);
+            return "";
+        }
+        return dir + "/" + (path.startsWith("./") ? path.slice(2) : path);
     }
 
     function _deriveLegacySurface(type, capabilities) {
@@ -334,17 +348,16 @@ Singleton {
                     log.warn("unknown plugin surface", surface, "in", dir);
                     continue;
                 }
-                const rel = manifest.components[surface];
-                if (!rel)
+                const path = _pluginFilePath(dir, manifest.components[surface]);
+                if (!path)
                     continue;
-                paths[surface] = dir + "/" + _stripDotSlash(rel);
+                paths[surface] = path;
             }
             return paths;
         }
-        if (manifest.component) {
-            const surface = _deriveLegacySurface(manifest.type, manifest.capabilities);
-            paths[surface] = dir + "/" + _stripDotSlash(manifest.component);
-        }
+        const legacyPath = _pluginFilePath(dir, manifest.component);
+        if (legacyPath)
+            paths[_deriveLegacySurface(manifest.type, manifest.capabilities)] = legacyPath;
         return paths;
     }
 
@@ -360,12 +373,8 @@ Singleton {
         }
 
         const dir = absPath.substring(0, absPath.lastIndexOf('/'));
-        let settings = manifest.settings;
-        if (settings && settings.startsWith("./"))
-            settings = settings.slice(2);
-        let startupCheck = manifest.startupCheck;
-        if (startupCheck && startupCheck.startsWith("./"))
-            startupCheck = startupCheck.slice(2);
+        const settingsPath = _pluginFilePath(dir, manifest.settings);
+        const startupCheckPath = _pluginFilePath(dir, manifest.startupCheck);
 
         const componentPaths = _resolveComponentPaths(manifest, dir);
         const surfaces = Object.keys(componentPaths);
@@ -397,8 +406,8 @@ Singleton {
         info.componentPaths = componentPaths;
         info.surfaces = surfaces;
         info.componentPath = componentPaths.widget || componentPaths[surfaces[0]];
-        info.settingsPath = settings ? (dir + "/" + settings) : null;
-        info.startupCheckPath = startupCheck ? (dir + "/" + startupCheck) : null;
+        info.settingsPath = settingsPath || null;
+        info.startupCheckPath = startupCheckPath || null;
         info.loaded = isPluginLoaded(manifest.id);
         info.type = manifest.type || (manifest.components ? "composite" : "widget");
         info.source = sourceTag;
@@ -1146,7 +1155,8 @@ Singleton {
         const userUrl = Paths.toFileUrl(root.pluginDirectory);
         const systemUrl = Paths.toFileUrl(root.systemPluginDirectory);
         userWatcher.folder = "";
-        userWatcher.folder = userUrl;
+        if (!AdminPolicy.disableUserPlugins)
+            userWatcher.folder = userUrl;
         systemWatcher.folder = "";
         systemWatcher.folder = systemUrl;
         resyncDebounce.restart();

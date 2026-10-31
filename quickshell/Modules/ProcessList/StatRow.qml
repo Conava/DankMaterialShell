@@ -40,7 +40,6 @@ Item {
         anchors.leftMargin: Theme.spacingM
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
-        isMonospace: false
         text: root.value || "—"
         font.pixelSize: Theme.fontSizeMedium
         color: Theme.surfaceText

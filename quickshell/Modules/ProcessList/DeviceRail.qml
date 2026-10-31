@@ -122,7 +122,6 @@ FocusScope {
                                 NumericText {
                                     id: valueLabel
                                     width: parent.width
-                                    isMonospace: false
                                     text: entry.modelData.value ?? ""
                                     color: item.supportingContentColor
                                     font.pixelSize: Theme.fontSizeSmall

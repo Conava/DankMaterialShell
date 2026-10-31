@@ -53,7 +53,7 @@ Card {
         interval: DashMetrics.mediaPositionPollInterval
         running: root.live && root.visible && root.interactive && root.showSeekbar && root.playing && !root.isSeeking
         repeat: true
-        onTriggered: root.activePlayer?.positionSupported && root.activePlayer.positionChanged()
+        onTriggered: MprisController.refreshPosition(root.activePlayer)
     }
 
     Loader {
@@ -122,6 +122,7 @@ Card {
                 id: titleLabel
                 width: parent.width
                 text: root.inlineMetadata ? root.titleText + " · " + root.artistText : root.titleText
+                fontToken: root.options.titleFont ?? MediaOptions.defaultTitleFont
                 font.pixelSize: root.compact ? Theme.fontSizeMedium : Theme.fontSizeLarge
                 font.weight: Theme.fontWeightMedium
                 color: root.contentColor
@@ -153,6 +154,7 @@ Card {
 
             DSeekbar {
                 id: seekbar
+                focusRingColor: MediaAccentService.focusRing
                 anchors.fill: parent
                 activePlayer: root.activePlayer
                 stableLength: MprisController.activePlayerStableLength

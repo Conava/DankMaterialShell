@@ -497,7 +497,6 @@ Item {
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
                     width: Theme.iconButtonSize * 2
-                    isMonospace: false
                     text: sensor.modelData.value
                     font.pixelSize: Theme.fontSizeMedium
                     color: Theme.surfaceText

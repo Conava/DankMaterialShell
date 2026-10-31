@@ -379,7 +379,7 @@ Rectangle {
 
             InfoChip {
                 iconName: "tag"
-                text: I18n.tr("PID") + " " + root.pid
+                text: I18n.tr("PID %1", "%1 is a process id").arg(root.pid)
             }
 
             InfoChip {
@@ -396,7 +396,7 @@ Rectangle {
             InfoChip {
                 iconName: "account_tree"
                 text: root.parentProcess ? root.parentProcess.command : (root.live?.ppid ?? 0) > 0 ? String(root.live.ppid) : ""
-                tip: I18n.tr("Parent", "the process that started this one") + (root.parentProcess ? ", " + I18n.tr("PID") + " " + root.parentProcess.pid : "")
+                tip: I18n.tr("Parent", "the process that started this one") + (root.parentProcess ? ", " + I18n.tr("PID %1", "%1 is a process id").arg(root.parentProcess.pid) : "")
             }
 
             // App launch scopes and login sessions say nothing the app name doesn't; only real services get a chip.

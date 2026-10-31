@@ -11,6 +11,7 @@ import (
 
 	"github.com/duxlabs-dev/dux-go/ipc"
 	"github.com/duxlabs-dev/dux-go/syncmap"
+	"github.com/duxlabs-dev/dux-shell/core/internal/clipolicy"
 	"github.com/duxlabs-dev/dux-shell/core/internal/geolocation"
 	"github.com/duxlabs-dev/dux-shell/core/internal/log"
 	"github.com/duxlabs-dev/dux-shell/core/internal/matugen"
@@ -38,6 +39,7 @@ import (
 	"github.com/duxlabs-dev/dux-shell/core/internal/server/wlroutput"
 	"github.com/duxlabs-dev/dux-shell/core/internal/systemd"
 	"github.com/duxlabs-dev/dux-shell/core/internal/utils"
+	"github.com/spf13/afero"
 )
 
 const APIVersion = 38
@@ -109,7 +111,19 @@ func InitializeNetworkManager() error {
 }
 
 func InitializeLoginctlManager() error {
-	manager, err := loginctl.NewManager()
+	keepLockOnUnlock, err := clipolicy.LogindUnlockDisabled(afero.NewOsFs())
+	if err != nil {
+		log.Errorf("CLI policy unreadable, keeping locks through logind Unlock: %v", err)
+		keepLockOnUnlock = true
+	}
+	lockSettings, err := clipolicy.LockSettings(afero.NewOsFs())
+	if err != nil {
+		log.Errorf("CLI policy unreadable, ignoring its lock settings: %v", err)
+	}
+	manager, err := loginctl.NewManager(keepLockOnUnlock, loginctl.LockPolicy{
+		LockBeforeSuspend:       clipolicy.LockSettingBool(lockSettings, "lockBeforeSuspend"),
+		LoginctlLockIntegration: clipolicy.LockSettingBool(lockSettings, "loginctlLockIntegration"),
+	})
 	if err != nil {
 		log.Warnf("Failed to initialize loginctl manager: %v", err)
 		return err
@@ -782,7 +796,7 @@ func handleSubscribe(ctx context.Context, conn *ipc.ConnWriter, req ipc.Request)
 		mgr := dbusManager
 		events := mgr.SubscribeSignals(dbusClient)
 		forwardSubscription(&wg, eventChan, stopChan, "dbus", events, func() {
-			mgr.UnsubscribeSignals(dbusClient)
+			mgr.UnsubscribeSignals(dbusClient, events)
 		}, nil)
 	}
 
@@ -1121,7 +1135,7 @@ func (s *Server) Serve(printDocs bool) error {
 		log.Info(" clipboard.paste                       - Get current clipboard text")
 		log.Info(" clipboard.search                      - Search history (params: query?, mimeType?, isImage?, limit?, offset?, before?, after?)")
 		log.Info(" clipboard.getConfig                   - Get clipboard configuration")
-		log.Info(" clipboard.setConfig                   - Set configuration (params: maxHistory?, maxEntrySize?, autoClearDays?, clearAtStartup?)")
+		log.Info(" clipboard.setConfig                   - Set configuration (params: maxHistory?, maxEntrySize?, autoClearDays?, clearAtStartup?, disabled?, maxPinned?)")
 		log.Info(" clipboard.subscribe                   - Subscribe to clipboard state changes (streaming)")
 		log.Info("Notify:")
 		log.Info(" notify.watchAction                    - Open a file when a notification action fires (params: id, path)")

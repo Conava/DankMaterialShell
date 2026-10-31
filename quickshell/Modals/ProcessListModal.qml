@@ -190,7 +190,7 @@ DFloatingWindow {
                 }
 
                 StyledText {
-                    text: I18n.tr("DMS_SOCKET not available")
+                    text: I18n.tr("%1 not available", "%1 is a tool or environment variable name").arg("DMS_SOCKET")
                     font.pixelSize: Theme.fontSizeMedium
                     color: Theme.surfaceText
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -266,7 +266,6 @@ DFloatingWindow {
                             id: searchField
                             Layout.fillWidth: true
                             Layout.maximumWidth: Theme.fontSizeMedium * 30
-                            Layout.preferredHeight: Theme.buttonHeightS
                             placeholderText: I18n.tr("Search processes...", "process search placeholder")
                             text: processListModal.searchText
                             onTextChanged: processListModal.searchText = text

@@ -16,8 +16,8 @@ Singleton {
     readonly property real popoutWidth: widthFor(false)
     readonly property real weekColumnWidth: 28
     readonly property real popoutWidthWide: popoutWidth + weekColumnWidth + Theme.spacingS
-    readonly property real contentPadding: Theme.spacingM
-    readonly property real contentGap: Theme.spacingM
+    readonly property real contentPadding: Theme.spacingM + Theme.densityStepXS
+    readonly property real contentGap: Theme.spacingM + Theme.densityStepXS
     readonly property real editHeaderHeight: Theme.minimumTouchTargetSize
     readonly property real islandHandleHeight: Theme.spacingXL
     readonly property real islandHandleChromeHeight: islandHandleHeight + contentPadding
@@ -26,7 +26,6 @@ Singleton {
     // Card pills overhang their card by half their height and must stay inside the pages clip.
     readonly property real islandPillOverhang: PopoutMetrics.chromeButtonSize / 2
     readonly property real islandEditChromeHeight: islandEditHeaderInset + editHeaderHeight + contentPadding + islandPillOverhang + islandEditBottomInset
-    readonly property real islandEditRoom: islandEditChromeHeight - islandHandleChromeHeight
     readonly property real spinnerSize: Theme.iconButtonSize
     readonly property real triggerWidth: CcMetrics.triggerWidth
     readonly property int transitionDuration: CcMetrics.transitionDuration
@@ -36,8 +35,14 @@ Singleton {
     readonly property int overlayZ: CcMetrics.overlayZ
     readonly property bool animationsEnabled: CcMetrics.animationsEnabled
 
+    function islandChromeHeight(tabBarHeight) {
+        return tabBarHeight > 0 ? contentPadding * 2 + tabBarHeight + contentGap : islandHandleChromeHeight;
+    }
+
     function widthFor(weekNumbers, screenWidth, columns = gridColumns) {
-        const panelWidth = Math.max(minimumPopoutWidth, preferredColumnWidth * columns + gridGap * (columns - 1) + contentPadding * 2);
+        // The floor is sized at comfortable spacing, so it carries the density offsets.
+        const floorWidth = minimumPopoutWidth + (gridGap - Theme.spacingS) * (columns - 1) + (contentPadding - Theme.spacingM) * 2;
+        const panelWidth = Math.max(floorWidth, preferredColumnWidth * columns + gridGap * (columns - 1) + contentPadding * 2);
         const extra = weekNumbers ? weekColumnWidth + Theme.spacingS : 0;
         if (!Number.isFinite(screenWidth) || screenWidth <= 0)
             return panelWidth + extra;
@@ -133,8 +138,9 @@ Singleton {
     }
 
     readonly property int gridColumns: panelColumnsFor(overviewId)
+    // Cells ignore density so saved layouts and art sizes hold; only the gaps step.
     readonly property real gridRowUnit: 96
-    readonly property real gridGap: Theme.spacingS
+    readonly property real gridGap: CcMetrics.gridGap
     readonly property real tabMinHeight: heightForRows(minimumTabRows)
     readonly property real tabDefaultHeight: heightForRows(defaultTabRows)
     readonly property real cardRadius: Theme.cornerRadius
@@ -151,7 +157,7 @@ Singleton {
     readonly property real tileTrendFillAlpha: 0.1
     readonly property real tileValueSizeCompact: Math.round((Theme.fontSizeXXLarge + Theme.fontSizeXLarge) / 2)
     readonly property real gaugeSize: Theme.buttonHeightXS
-    readonly property real gaugeSizeHero: CcMetrics.iconBoxSize
+    readonly property real gaugeSizeHero: CcMetrics.baseIconBoxSize
     readonly property real gaugeStroke: 3
     readonly property real gaugeGap: Theme.spacingXXS
     readonly property real batteryMeterThickness: 28
@@ -160,7 +166,7 @@ Singleton {
 
     readonly property real weatherCompactIconRatio: 0.4
     readonly property real weatherTempSize: Theme.fontSizeXXLarge
-    readonly property real weatherChipSize: CcMetrics.iconBoxSize
+    readonly property real weatherChipSize: CcMetrics.baseIconBoxSize
 
     readonly property real meterBarThickness: Theme.spacingM
     readonly property real overviewPlayWidth: 64
@@ -214,9 +220,12 @@ Singleton {
     readonly property int mediaLyricsRequestTimeout: 16000
     readonly property int mediaLyricsLoadingDelay: 300
     readonly property real mediaLyricsPositionTolerance: 0.05
+    readonly property real mediaLyricsWholeSecondSlack: 0.005
     readonly property int mediaLyricsPositionProbeInterval: 5000
     readonly property real mediaLyricsPositionProbeDrift: 1.5
     readonly property real mediaLyricsPositionProbeThreshold: 1
+    readonly property int mediaLyricsPositionSettleInterval: 1000
+    readonly property real mediaLyricsTrackStartSlack: 5
     readonly property real lyricsNearOpacity: 0.55
     readonly property real lyricsFarOpacity: 0.3
     readonly property real lyricsLineHeight: 1.25

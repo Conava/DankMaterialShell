@@ -113,8 +113,14 @@
   "%1 is %2 and may use a lot of memory.": {
     "%1 is %2 and may use a lot of memory.": "%1 هو %2 وقد يستهلك الكثير من الذاكرة."
   },
+  "%1 is not installed. Install the package to manage the greeter.": {
+    "%1 is not installed. Install the package to manage the greeter.": ""
+  },
   "%1 is now included in config": {
     "%1 is now included in config": "تم تضمين %1 في الإعدادات الآن"
+  },
+  "%1 is running and will create duplicate Bluetooth players. Disable it with: %2": {
+    "%1 is running and will create duplicate Bluetooth players. Disable it with: %2": ""
   },
   "%1 issue found": {
     "%1 issue found": "تم العثور على %1 مشكلة"
@@ -146,6 +152,15 @@
   "%1 ms": {
     "%1 ms": "%1 مللي ثانية"
   },
+  "%1 not available": {
+    "%1 not available": "%1 غير متوفر"
+  },
+  "%1 not available - lock integration requires the DMS socket connection": {
+    "%1 not available - lock integration requires the DMS socket connection": ""
+  },
+  "%1 not available or disabled - cannot apply %2 colors": {
+    "%1 not available or disabled - cannot apply %2 colors": "%1 ليس متوفراً أو معطل - لا يمكن تطبيق ألوان %2"
+  },
   "%1 not found": {
     "%1 not found": "%1 غير موجود"
   },
@@ -175,6 +190,9 @@
   },
   "%1 printers": {
     "%1 printers": "%1 طابعات"
+  },
+  "%1 procs": {
+    "%1 procs": ""
   },
   "%1 second": {
     "%1 second": "ثانية %1"
@@ -218,11 +236,17 @@
   "%1: %2": {
     "%1: %2": "%1: %2"
   },
+  "%1d ago": {
+    "%1d ago": ""
+  },
   "%1h": {
     "%1h": "%1 ساعة"
   },
   "%1h %2m": {
     "%1h %2m": "%1 ساعة %2 دقيقة"
+  },
+  "%1h ago": {
+    "%1h ago": ""
   },
   "%1m": {
     "%1m": "%1 دقيقة"
@@ -236,11 +260,17 @@
   "(Unnamed)": {
     "(Unnamed)": "(غير مسمى)"
   },
+  "(exit %1)": {
+    "(exit %1)": ""
+  },
   "+ %1 more": {
     "+ %1 more": "+ %1 المزيد"
   },
   "+%1 conditions": {
     "+%1 conditions": "+%1 شرط"
+  },
+  "1 hour before": {
+    "1 hour before": ""
   },
   "1 notification": {
     "1 notification": "إشعار واحد"
@@ -386,8 +416,8 @@
   "Add \"%1\" to the %2 group?": {
     "Add \"%1\" to the %2 group?": "هل تريد إضافة \"%1\" إلى مجموعة %2؟"
   },
-  "Add \"%1\" to the %2 group? They must log out and back in, then run dms-greeter sync --profile to publish their login-screen theme.": {
-    "Add \"%1\" to the %2 group? They must log out and back in, then run dms-greeter sync --profile to publish their login-screen theme.": "هل تريد إضافة \"%1\" إلى مجموعة %2؟ يجب عليهم تسجيل الخروج وإعادة تسجيل الدخول، ثم تشغيل dms-greeter sync --profile لنشر سمة شاشة تسجيل الدخول الخاصة بهم."
+  "Add \"%1\" to the %2 group? They must log out and back in, then run %3 to publish their login-screen theme.": {
+    "Add \"%1\" to the %2 group? They must log out and back in, then run %3 to publish their login-screen theme.": ""
   },
   "Add Desktop Widget": {
     "Add Desktop Widget": "إضافة أداة سطح مكتب"
@@ -461,8 +491,8 @@
   "Adds concave curves where the bar meets the screen edge": {
     "Adds concave curves where the bar meets the screen edge": "يضيف منحنيات مقعرة حيث يلتقي الشريط بحافة الشاشة"
   },
-  "Adds them to the %1 group so they can run dms-greeter sync --profile": {
-    "Adds them to the %1 group so they can run dms-greeter sync --profile": "يضيفهم إلى مجموعة %1 حتى يتمكنوا من تشغيل dms-greeter sync --profile"
+  "Adds them to the %1 group so they can run %2": {
+    "Adds them to the %1 group so they can run %2": ""
   },
   "Adds them to the %1 group so they can use sudo": {
     "Adds them to the %1 group so they can use sudo": "يضيفهم إلى مجموعة %1 حتى يتمكنوا من استخدام sudo"
@@ -545,8 +575,8 @@
   "Already upvoted, click again to remove": {
     "Already upvoted, click again to remove": "تم التصويت بالفعل، اضغط مرة أخرى للإزالة"
   },
-  "Also runs the templates in your matugen config.toml": {
-    "Also runs the templates in your matugen config.toml": "يقوم أيضاً بتشغيل القوالب الموجودة في ملف matugen config.toml الخاص بك"
+  "Also runs the templates in your %1": {
+    "Also runs the templates in your %1": ""
   },
   "Also saves the screenshot to disk": {
     "Also saves the screenshot to disk": "يحفظ لقطة الشاشة على القرص أيضاً"
@@ -604,9 +634,6 @@
   },
   "Anchor": {
     "Anchor": "المرساة (Anchor)"
-  },
-  "Anchored popouts open at the cursor instead of their widget": {
-    "Anchored popouts open at the cursor instead of their widget": "تفتح النوافذ المنبثقة المرساة عند المؤشر بدلاً من الأداة الخاصة بها"
   },
   "Animation duration": {
     "Animation duration": "مدة الحركة"
@@ -818,9 +845,6 @@
   "Authenticate": {
     "Authenticate": "صادِق"
   },
-  "Authenticating...": {
-    "Authenticating...": "جاري المصادقة..."
-  },
   "Authentication": {
     "Authentication": "المصادقة"
   },
@@ -845,11 +869,11 @@
   "Authorize": {
     "Authorize": "منح الإذن"
   },
-  "Authorize pairing with ": {
-    "Authorize pairing with ": "سماح بالاقتران ل "
+  "Authorize pairing with %1": {
+    "Authorize pairing with %1": ""
   },
-  "Authorize service for ": {
-    "Authorize service for ": "منح إذن الخدمة ل "
+  "Authorize service for %1": {
+    "Authorize service for %1": ""
   },
   "Auto": {
     "Auto": "تلقائي"
@@ -1238,9 +1262,6 @@
   "Built-in plugins": {
     "Built-in plugins": "الإضافات المدمجة"
   },
-  "Bundled greeter active": {
-    "Bundled greeter active": "شاشة الترحيب المجمعة نشطة"
-  },
   "Button areas": {
     "Button areas": "مناطق الأزرار"
   },
@@ -1490,6 +1511,9 @@
   "Classes": {
     "Classes": "فئات"
   },
+  "Classic": {
+    "Classic": ""
+  },
   "Clear All": {
     "Clear All": "مسح الكل"
   },
@@ -1517,8 +1541,8 @@
   "Click 'Setup' to create %1 and add include to your compositor config.": {
     "Click 'Setup' to create %1 and add include to your compositor config.": "انقر على 'إعداد' لإنشاء %1 وإضافة التضمين إلى ملف تكوين مدير النوافذ الخاص بك."
   },
-  "Click Import to add a .ovpn or .conf": {
-    "Click Import to add a .ovpn or .conf": "اضغط استيراد لإضافة ملف .ovpn أو .conf"
+  "Click Import to add a %1 or %2 file": {
+    "Click Import to add a %1 or %2 file": ""
   },
   "Click actions": {
     "Click actions": "إجراءات النقر"
@@ -1670,6 +1694,9 @@
   "Columns": {
     "Columns": "أعمدة"
   },
+  "Comfortable": {
+    "Comfortable": ""
+  },
   "Comma-separated list of layout names. Leave empty to use the system keyboard settings.": {
     "Comma-separated list of layout names. Leave empty to use the system keyboard settings.": "قائمة بأسماء التخطيطات مفصولة بفواصل. اتركها فارغة لاستخدام إعدادات لوحة مفاتيح النظام."
   },
@@ -1751,8 +1778,8 @@
   "Confirm Display Changes": {
     "Confirm Display Changes": "تأكيد تغييرات العرض"
   },
-  "Confirm passkey for ": {
-    "Confirm passkey for ": "تأكيد مفتاح المرور لـ "
+  "Confirm passkey for %1": {
+    "Confirm passkey for %1": ""
   },
   "Confirm password": {
     "Confirm password": "تأكيد كلمة المرور"
@@ -1846,6 +1873,9 @@
   },
   "Copy": {
     "Copy": "نسخ"
+  },
+  "Copy %1": {
+    "Copy %1": ""
   },
   "Copy Full Command": {
     "Copy Full Command": "نسخ الأمر الكامل"
@@ -2069,8 +2099,8 @@
   "DMS out of date": {
     "DMS out of date": "نسخة DMS غير محدثة"
   },
-  "DMS removes its managed block from /etc/pam.d/greetd and stops write services": {
-    "DMS removes its managed block from /etc/pam.d/greetd and stops write services": "تقوم DMS بإزالة الكتلة المُدارة الخاصة بها من /etc/pam.d/greetd وتوقف خدمات الكتابة"
+  "DMS removes its managed block from %1 and stops write services": {
+    "DMS removes its managed block from %1 and stops write services": ""
   },
   "DMS server is outdated (API v%1, expected v%2)": {
     "DMS server is outdated (API v%1, expected v%2)": "خادم DMS قديم (إصدار API %1، المتوقع %2)"
@@ -2087,9 +2117,6 @@
   "DMS uses the font family, weight and scale. Exact face, slant, width and separately scaled bars may differ.": {
     "DMS uses the font family, weight and scale. Exact face, slant, width and separately scaled bars may differ.": "يستخدم DMS عائلة الخط والوزن والمقياس. قد يختلف الوجه الدقيق والميل والعرض والأشرطة ذات الحجم المقياس بشكل منفصل."
   },
-  "DMS_SOCKET not available": {
-    "DMS_SOCKET not available": "DMS_SOCKET غير متوفر"
-  },
   "Daily": {
     "Daily": "يومياً"
   },
@@ -2104,15 +2131,6 @@
   },
   "DankBar": {
     "DankBar": "DankBar"
-  },
-  "DankCalendar": {
-    "DankCalendar": "DankCalendar"
-  },
-  "DankCalendar isn't installed": {
-    "DankCalendar isn't installed": "DankCalendar غير مثبت"
-  },
-  "DankCalendar isn't running": {
-    "DankCalendar isn't running": "DankCalendar لا يعمل"
   },
   "Dark": {
     "Dark": "داكن"
@@ -2179,6 +2197,9 @@
   },
   "Deck": {
     "Deck": "متطابق"
+  },
+  "Declared by the author, not enforced": {
+    "Declared by the author, not enforced": ""
   },
   "Default": {
     "Default": "الخيار الافتراضي"
@@ -2257,6 +2278,9 @@
   },
   "Deletes all stored screen time": {
     "Deletes all stored screen time": "يحذف كل وقت الشاشة المخزن"
+  },
+  "Dense": {
+    "Dense": ""
   },
   "Dependencies & documentation": {
     "Dependencies & documentation": "التبعيات والتوثيق"
@@ -2353,6 +2377,9 @@
   },
   "Disabled": {
     "Disabled": "غير نشط"
+  },
+  "Disabled by Auto": {
+    "Disabled by Auto": ""
   },
   "Disabled by Click through": {
     "Disabled by Click through": "معطل بواسطة النقر عبر"
@@ -2492,6 +2519,9 @@
   "Dock": {
     "Dock": "شريط التطبيقات"
   },
+  "Dock %1": {
+    "Dock %1": ""
+  },
   "Dock margin, opacity, and border": {
     "Dock margin, opacity, and border": "هامش شريط التطبيقات والعتامة والحدود"
   },
@@ -2524,6 +2554,9 @@
   },
   "Don't change": {
     "Don't change": "لا تغير"
+  },
+  "Don't dim unfocused apps": {
+    "Don't dim unfocused apps": ""
   },
   "Door Open": {
     "Door Open": "الباب مفتوح"
@@ -2599,6 +2632,18 @@
   },
   "Dusk (Nautical Twilight)": {
     "Dusk (Nautical Twilight)": "الغسق (الغسق البحري)"
+  },
+  "Dux Calendar": {
+    "Dux Calendar": ""
+  },
+  "Dux Calendar isn't installed": {
+    "Dux Calendar isn't installed": ""
+  },
+  "Dux Calendar isn't running": {
+    "Dux Calendar isn't running": ""
+  },
+  "Dux Greeter docs": {
+    "Dux Greeter docs": ""
   },
   "Dwindle": {
     "Dwindle": "تضاؤل"
@@ -2738,8 +2783,8 @@
   "Enter PIN": {
     "Enter PIN": "أدخل رمز PIN"
   },
-  "Enter PIN for ": {
-    "Enter PIN for ": "أدخل رمز PIN لـ "
+  "Enter PIN for %1": {
+    "Enter PIN for %1": ""
   },
   "Enter a new name for session \"%1": {
     "Enter a new name for session \"%1\"": "أدخل اسمًا جديدًا للجلسة \"%1\""
@@ -2747,8 +2792,8 @@
   "Enter a new name for this workspace": {
     "Enter a new name for this workspace": "أدخل اسماً جديداً لسطح المكتب هذه"
   },
-  "Enter credentials for ": {
-    "Enter credentials for ": "تسجيل الدخول لـ "
+  "Enter credentials for %1": {
+    "Enter credentials for %1": ""
   },
   "Enter custom lock screen format (e.g., dddd, MMMM d)": {
     "Enter custom lock screen format (e.g., dddd, MMMM d)": "أدخل صيغة مخصصة لشاشة القفل (مثال. dddd. MMMM d)"
@@ -2762,17 +2807,17 @@
   "Enter network name and password": {
     "Enter network name and password": "أدخل اسم الشبكة وكلمة المرور"
   },
-  "Enter passkey for ": {
-    "Enter passkey for ": "أدخل مفتاح المرور لـ "
+  "Enter passkey for %1": {
+    "Enter passkey for %1": ""
   },
-  "Enter password for ": {
-    "Enter password for ": "ادخال كلمة المرور ل "
+  "Enter password for %1": {
+    "Enter password for %1": ""
   },
   "Enter text to encode": {
     "Enter text to encode": "أدخل نصًا للترميز"
   },
-  "Enter this passkey on ": {
-    "Enter this passkey on ": "أدخل مفتاح المرور هذا في "
+  "Enter this passkey on %1": {
+    "Enter this passkey on %1": ""
   },
   "Enter to paste": {
     "Enter to paste": "اضغط Enter للصق"
@@ -3032,6 +3077,9 @@
   "Failed to read theme file: %1": {
     "Failed to read theme file: %1": "فشل قراءة ملف السمة: %1"
   },
+  "Failed to reboot to firmware setup": {
+    "Failed to reboot to firmware setup": ""
+  },
   "Failed to reload plugin: %1": {
     "Failed to reload plugin: %1": "فشل إعادة تحميل الملحق: %1"
   },
@@ -3053,8 +3101,8 @@
   "Failed to resume printer": {
     "Failed to resume printer": "تعذر استئناف تشغيل الطابعة"
   },
-  "Failed to run 'dms-greeter status'. Ensure the dms-greeter package is installed.": {
-    "Failed to run 'dms-greeter status'. Ensure the dms-greeter package is installed.": "فشل تشغيل 'dms-greeter status'. تأكد من تثبيت حزمة dms-greeter."
+  "Failed to run '%1'. Ensure the %2 package is installed.": {
+    "Failed to run '%1'. Ensure the %2 package is installed.": ""
   },
   "Failed to save VPN credentials": {
     "Failed to save VPN credentials": "فشل حفظ بيانات اعتماد VPN"
@@ -3176,8 +3224,8 @@
   "File manager": {
     "File manager": "مدير الملفات"
   },
-  "File search requires dsearch\nInstall from github.com/AvengeMedia/danksearch": {
-    "File search requires dsearch\nInstall from github.com/AvengeMedia/danksearch": "يتطلب البحث عن الملفات dsearch\nقم بالتثبيت من github.com/AvengeMedia/danksearch"
+  "File search requires %1\nInstall from %2": {
+    "File search requires %1\nInstall from %2": ""
   },
   "File the command writes; leave empty to read stdout": {
     "File the command writes; leave empty to read stdout": "الملف الذي يكتبه الأمر؛ اتركه فارغًا للقراءة من الإخراج القياسي (stdout)"
@@ -3209,9 +3257,6 @@
   "Fine-tune the seed around the color wheel": {
     "Fine-tune the seed around the color wheel": "ضبط دقيق للبذرة حول عجلة الألوان"
   },
-  "Fingerprint": {
-    "Fingerprint": "بصمة الإصبع"
-  },
   "Fingerprint at login": {
     "Fingerprint at login": "بصمة الإصبع عند تسجيل الدخول"
   },
@@ -3241,6 +3286,9 @@
   },
   "Fires with any modifiers held": {
     "Fires with any modifiers held": "يعمل مع الضغط على أي مفاتيح تعديل"
+  },
+  "Firmware setup": {
+    "Firmware setup": ""
   },
   "First Time Setup": {
     "First Time Setup": "الإعداد لأول مرة"
@@ -3401,6 +3449,9 @@
   "For %1": {
     "For %1": "لـ %1"
   },
+  "For 1 hour": {
+    "For 1 hour": ""
+  },
   "For you": {
     "For you": "لك"
   },
@@ -3518,6 +3569,9 @@
   "GPU": {
     "GPU": "معالج الرسوميات"
   },
+  "GPU %1": {
+    "GPU %1": ""
+  },
   "GPU Monitoring": {
     "GPU Monitoring": "مراقبة وحدة معالجة الرسومات (GPU)"
   },
@@ -3541,6 +3595,9 @@
   },
   "Gamma": {
     "Gamma": "حرارة الالوان"
+  },
+  "Gamma %1": {
+    "Gamma %1": ""
   },
   "Gamma control": {
     "Gamma control": "التحكم في غاما"
@@ -3701,6 +3758,9 @@
   "Health": {
     "Health": "صحة البطارية"
   },
+  "Health %1": {
+    "Health %1": ""
+  },
   "Heat shimmer": {
     "Heat shimmer": "تذبذب الحرارة"
   },
@@ -3751,6 +3811,9 @@
   },
   "Hide App": {
     "Hide App": "إخفاء التطبيق"
+  },
+  "Hide bar on fullscreen": {
+    "Hide bar on fullscreen": ""
   },
   "Hide cursor on touch": {
     "Hide cursor on touch": "إخفاء المؤشر عند اللمس"
@@ -3929,8 +3992,8 @@
   "IP address or hostname": {
     "IP address or hostname": "عنوان IP أو اسم المضيف"
   },
-  "IP sharing setup failed. Check that dnsmasq is installed.": {
-    "IP sharing setup failed. Check that dnsmasq is installed.": "فشل إعداد مشاركة بروتوكول الإنترنت (IP). تأكد من تثبيت dnsmasq."
+  "IP sharing setup failed. Check that %1 is installed.": {
+    "IP sharing setup failed. Check that %1 is installed.": ""
   },
   "ISO date": {
     "ISO date": "تاريخ ISO"
@@ -4148,14 +4211,14 @@
   "Install failed: %1": {
     "Install failed: %1": "فشل التثبيت: %1"
   },
-  "Install matugen package for dynamic theming": {
-    "Install matugen package for dynamic theming": "تثبيت حزمة matugen للسمات الديناميكية"
-  },
   "Install plugin '%1' from the DMS registry?": {
     "Install plugin '%1' from the DMS registry?": "هل تريد تثبيت الملحق '%1' من سجل DMS؟"
   },
   "Install system updates?": {
     "Install system updates?": "تثبيت تحديثات النظام؟"
+  },
+  "Install the %1 package for dynamic theming": {
+    "Install the %1 package for dynamic theming": ""
   },
   "Install theme '%1' from the DMS registry?": {
     "Install theme '%1' from the DMS registry?": "هل تريد تثبيت السمة '%1' من سجل DMS؟"
@@ -4166,8 +4229,8 @@
   "Install wallpaper '%1'?": {
     "Install wallpaper '%1'?": "تثبيت خلفية '%1'؟"
   },
-  "Installation and PAM setup are documented in the ": {
-    "Installation and PAM setup are documented in the ": "تجدون توثيق التثبيت وإعدادات الـ PAM في "
+  "Installation and PAM setup are documented in the %1.": {
+    "Installation and PAM setup are documented in the %1.": ""
   },
   "Installed": {
     "Installed": "مثبت"
@@ -4199,6 +4262,9 @@
   "Interface": {
     "Interface": "الواجهة"
   },
+  "Interface density": {
+    "Interface density": ""
+  },
   "Interface style": {
     "Interface style": "نمط الواجهة"
   },
@@ -4225,6 +4291,9 @@
   },
   "Invalid wallpaper layout": {
     "Invalid wallpaper layout": "تخطيط خلفية غير صالح"
+  },
+  "Inverse Surface": {
+    "Inverse Surface": ""
   },
   "Iridescence": {
     "Iridescence": "قزحية"
@@ -4300,9 +4369,6 @@
   },
   "Keybinds": {
     "Keybinds": "اختصارات لوحة المفاتيح"
-  },
-  "Keyboard": {
-    "Keyboard": "لوحة المفاتيح"
   },
   "Keyboard layout": {
     "Keyboard layout": "تخطيط لوحة المفاتيح"
@@ -4409,8 +4475,8 @@
   "Launching": {
     "Launching": "جاري التشغيل"
   },
-  "Layer namespace dms:blurwallpaper, needs a niri blur rule": {
-    "Layer namespace dms:blurwallpaper, needs a niri blur rule": "مساحة اسم الطبقة dms:blurwallpaper، تتطلب قاعدة تمويه niri"
+  "Layer namespace %1, needs a niri blur rule": {
+    "Layer namespace %1, needs a niri blur rule": ""
   },
   "Layer outline": {
     "Layer outline": "مخطط الطبقة"
@@ -4610,9 +4676,6 @@
   "Log out": {
     "Log out": "تسجيل الخروج"
   },
-  "Login": {
-    "Login": "تسجيل الدخول"
-  },
   "Login screen appearance and authentication": {
     "Login screen appearance and authentication": "مظهر شاشة تسجيل الدخول والمصادقة"
   },
@@ -4675,6 +4738,9 @@
   },
   "Managed by Nix": {
     "Managed by Nix": "مدار بواسطة Nix"
+  },
+  "Managed by administrator policy": {
+    "Managed by administrator policy": ""
   },
   "Managed by the primary PAM source": {
     "Managed by the primary PAM source": "تتم إدارتها بواسطة مصدر PAM الأساسي"
@@ -4765,9 +4831,6 @@
   },
   "Material palette": {
     "Material palette": "لوحة الألوان المادية"
-  },
-  "Material scale": {
-    "Material scale": "مقياس مادي"
   },
   "Matugen Missing": {
     "Matugen Missing": "Matugen مفقود"
@@ -4987,6 +5050,9 @@
   },
   "More": {
     "More": "المزيد"
+  },
+  "More in %1": {
+    "More in %1": ""
   },
   "More samples look smoother and cost more GPU": {
     "More samples look smoother and cost more GPU": "المزيد من العينات تبدو أكثر سلاسة وتستهلك المزيد من طاقة وحدة معالجة الرسومات"
@@ -5597,17 +5663,17 @@
   "Not available": {
     "Not available": "غير متاح"
   },
-  "Not available - install fprintd and pam_fprintd": {
-    "Not available - install fprintd and pam_fprintd": "غير متاح - قم بتثبيت fprintd و pam_fprintd"
+  "Not available - install %1 and %2": {
+    "Not available - install %1 and %2": "غير متوفر - ثبت %1 و%2"
   },
-  "Not available - install or configure pam_u2f": {
-    "Not available - install or configure pam_u2f": "غير متوفر - قم بتثبيت أو إعداد pam_u2f"
+  "Not available - install %1 and %2, or configure %3 PAM": {
+    "Not available - install %1 and %2, or configure %3 PAM": ""
   },
-  "Not available — install fprintd and pam_fprintd, or configure greetd PAM.": {
-    "Not available — install fprintd and pam_fprintd, or configure greetd PAM.": "غير متاح — قم بتثبيت fprintd و pam_fprintd، أو قم بتكوين greetd PAM."
+  "Not available - install or configure %1": {
+    "Not available - install or configure %1": ""
   },
-  "Not available — install or configure pam_u2f, or configure greetd PAM.": {
-    "Not available — install or configure pam_u2f, or configure greetd PAM.": "غير متاح — قم بتثبيت أو تكوين pam_u2f، أو قم بتكوين greetd PAM."
+  "Not available - install or configure %1, or configure %2 PAM": {
+    "Not available - install or configure %1, or configure %2 PAM": ""
   },
   "Not bound": {
     "Not bound": "غير مربوط"
@@ -5825,8 +5891,8 @@
   "Opening GitHub to upvote": {
     "Opening GitHub to upvote": "فتح GitHub للتصويت"
   },
-  "Opening terminal: ": {
-    "Opening terminal: ": "فتح الطرفيّة: "
+  "Opening terminal: %1": {
+    "Opening terminal: %1": ""
   },
   "Opens": {
     "Opens": "يفتح"
@@ -5971,6 +6037,9 @@
   },
   "PID": {
     "PID": "معرف العملية (PID)"
+  },
+  "PID %1": {
+    "PID %1": ""
   },
   "PIN": {
     "PIN": "PIN"
@@ -6161,8 +6230,8 @@
   "Pixelate": {
     "Pixelate": "بكسلة"
   },
-  "Place plugin directories here. Each plugin should have a plugin.json manifest file.": {
-    "Place plugin directories here. Each plugin should have a plugin.json manifest file.": "ضع مجلدات الملحقات هنا. يجب أن يحتوي كل ملحق على ملف بيان باسم plugin.json."
+  "Place plugin directories here. Each plugin should have a %1 manifest file.": {
+    "Place plugin directories here. Each plugin should have a %1 manifest file.": ""
   },
   "Placement": {
     "Placement": "الموضع"
@@ -6179,8 +6248,8 @@
   "Playback": {
     "Playback": "أجهزة التشغيل"
   },
-  "Playback error: ": {
-    "Playback error: ": "خطأ في التشغيل: "
+  "Playback error: %1": {
+    "Playback error: %1": ""
   },
   "Playback position": {
     "Playback position": "موضع التشغيل"
@@ -6211,6 +6280,9 @@
   },
   "Plugin Source Code": {
     "Plugin Source Code": "الكود المصدري للملحق"
+  },
+  "Plugin authors": {
+    "Plugin authors": ""
   },
   "Plugin dependency missing": {
     "Plugin dependency missing": "تعذر العثور على تبعية الملحق"
@@ -6512,8 +6584,8 @@
   "Profile not found": {
     "Profile not found": "لم يتم العثور على ملف التعريف"
   },
-  "Profile not found in monitors.json": {
-    "Profile not found in monitors.json": "الملف الشخصي غير موجود في monitors.json"
+  "Profile not found in %1": {
+    "Profile not found in %1": ""
   },
   "Profile on AC": {
     "Profile on AC": "ملف التعريف عند استخدام التيار المتردد"
@@ -6611,6 +6683,9 @@
   "Read:": {
     "Read:": "قراءة:"
   },
+  "Readings": {
+    "Readings": ""
+  },
   "Reads audio devices and volume": {
     "Reads audio devices and volume": "يقرأ أجهزة الصوت ومستوى الصوت"
   },
@@ -6641,11 +6716,14 @@
   "Reboot recommended": {
     "Reboot recommended": "يوصى بإعادة التشغيل"
   },
+  "Reboot targets": {
+    "Reboot targets": ""
+  },
   "Reboot to %1": {
     "Reboot to %1": "إعادة التشغيل إلى %1"
   },
-  "Reboot to another OS": {
-    "Reboot to another OS": "إعادة التشغيل إلى نظام تشغيل آخر"
+  "Reboot to firmware setup": {
+    "Reboot to firmware setup": ""
   },
   "Recent": {
     "Recent": "الأخيرة"
@@ -6773,8 +6851,8 @@
   "Remove the shortcut %1?": {
     "Remove the shortcut %1?": "هل تريد إزالة الاختصار %1؟"
   },
-  "Remove the shortcut %1? An unbind entry will be saved to dms/binds-user.lua so it stays removed across DMS updates.": {
-    "Remove the shortcut %1? An unbind entry will be saved to dms/binds-user.lua so it stays removed across DMS updates.": "هل تريد إزالة الاختصار %1؟ سيتم حفظ إدخال إلغاء الربط في dms/binds-user.lua حتى يظل محذوفاً عبر تحديثات DMS."
+  "Remove the shortcut %1? An unbind entry will be saved to %2 so it stays removed across DMS updates.": {
+    "Remove the shortcut %1? An unbind entry will be saved to %2 so it stays removed across DMS updates.": ""
   },
   "Remove upvote": {
     "Remove upvote": "إزالة التصويت"
@@ -6824,14 +6902,14 @@
   "Report": {
     "Report": "تقرير"
   },
-  "Required plugin: ": {
-    "Required plugin: ": "الملحقات المطلوبة: "
+  "Required plugin: %1": {
+    "Required plugin: %1": ""
   },
   "Requires %1": {
     "Requires %1": "يتطلب %1"
   },
-  "Requires 'dgop' tool": {
-    "Requires 'dgop' tool": "يتطلب أداة 'dgop'"
+  "Requires %1, %2, and your user in the %3 group (plus %4 for fingerprint, %5 for security keys).": {
+    "Requires %1, %2, and your user in the %3 group (plus %4 for fingerprint, %5 for security keys).": ""
   },
   "Requires DMS %1": {
     "Requires DMS %1": "يتطلب DMS %1"
@@ -6841,9 +6919,6 @@
   },
   "Requires MangoWC compositor": {
     "Requires MangoWC compositor": "يتطلب MangoWC"
-  },
-  "Requires greetd, dms-greeter, and your user in the greeter group (plus fprintd/pam_fprintd for fingerprint, pam_u2f for security keys).": {
-    "Requires greetd, dms-greeter, and your user in the greeter group (plus fprintd/pam_fprintd for fingerprint, pam_u2f for security keys).": "يتطلب greetd و dms-greeter ووجود مستخدمك في مجموعة greeter (بالإضافة إلى fprintd/pam_fprintd لبصمات الأصابع، و pam_u2f لمفاتيح الأمان)."
   },
   "Requires night mode support": {
     "Requires night mode support": "يتطلب دعم الوضع الليلي"
@@ -6957,7 +7032,7 @@
     "Root Filesystem": "نظام ملفات الجذر"
   },
   "Rotating Cookie": {
-    "Rotating Cookie": ""
+    "Rotating Cookie": "كعكة دوارة"
   },
   "Rounded": {
     "Rounded": "مستدير"
@@ -6965,8 +7040,8 @@
   "Route Bluetooth headset controls to the active DMS media player": {
     "Route Bluetooth headset controls to the active DMS media player": "توجيه عناصر تحكم سماعة البلوتوث إلى مشغل وسائط DMS النشط"
   },
-  "Routes launcher, dash, control center and notification shortcuts": {
-    "Routes launcher, dash, control center and notification shortcuts": "يوجه المشغل، ولوحة المعلومات، ومركز التحكم، واختصارات التنبيهات"
+  "Routes launcher, dash, control center and notification shortcuts. Bar widget clicks always open their own popout": {
+    "Routes launcher, dash, control center and notification shortcuts. Bar widget clicks always open their own popout": ""
   },
   "Rows": {
     "Rows": "الصفوف"
@@ -7001,8 +7076,8 @@
   "Run a shell command (e.g., notify-send)": {
     "Run a shell command (e.g., notify-send)": "تشغيل أمر غلاف (مثل notify-send)"
   },
-  "Run an external command on each wallpaper change and merge its JSON palette into matugen under a namespace, so templates can use e.g. {{name.color0}}. The command receives the wallpaper as {image} / $DMS_WALLPAPER and the mode as {mode} / $DMS_MODE.": {
-    "Run an external command on each wallpaper change and merge its JSON palette into matugen under a namespace, so templates can use e.g. {{name.color0}}. The command receives the wallpaper as {image} / $DMS_WALLPAPER and the mode as {mode} / $DMS_MODE.": "تشغيل أمر خارجي عند كل تغيير للخلفية ودمج لوحة JSON الخاصة به في matugen تحت مساحة اسم، بحيث يمكن للقوالب استخدام على سبيل المثال {{name.color0}}. يستقبل الأمر الخلفية كـ {image} / $DMS_WALLPAPER والوضع كـ {mode} / $DMS_MODE."
+  "Run an external command on each wallpaper change and merge its JSON palette into %1 under a namespace, so templates can use e.g. %2. The command receives the wallpaper as %3 and the mode as %4.": {
+    "Run an external command on each wallpaper change and merge its JSON palette into %1 under a namespace, so templates can use e.g. %2. The command receives the wallpaper as %3 and the mode as %4.": ""
   },
   "Run full sync": {
     "Run full sync": "تشغيل مزامنة كاملة"
@@ -7115,6 +7190,15 @@
   "Scale": {
     "Scale": "مقياس"
   },
+  "Scale battery level to charge limit": {
+    "Scale battery level to charge limit": ""
+  },
+  "Scale low and critical alert thresholds": {
+    "Scale low and critical alert thresholds": ""
+  },
+  "Scale the displayed battery level to the configured charge limit": {
+    "Scale the displayed battery level to the configured charge limit": ""
+  },
   "Scan": {
     "Scan": "فحص"
   },
@@ -7220,6 +7304,9 @@
   "Secondary Container": {
     "Secondary Container": "حاوية ثانوية"
   },
+  "Section dividers": {
+    "Section dividers": ""
+  },
   "Sections": {
     "Sections": "الأقسام"
   },
@@ -7228,9 +7315,6 @@
   },
   "Security": {
     "Security": "الأمان"
-  },
-  "Security key": {
-    "Security key": "مفتاح الأمان"
   },
   "Security key (%1)": {
     "Security key (%1)": "مفتاح الأمان (%1)"
@@ -7270,6 +7354,9 @@
   },
   "Select Dock Launcher Logo": {
     "Select Dock Launcher Logo": "اختيار شعار مشغل التطبيقات في شريط التطبيقات"
+  },
+  "Select Dot Icon": {
+    "Select Dot Icon": ""
   },
   "Select ICC Profile": {
     "Select ICC Profile": "اختر ملف تعريف ICC"
@@ -7375,6 +7462,9 @@
   },
   "Set notification rules": {
     "Set notification rules": "ضبط قواعد الإشعارات"
+  },
+  "Set one of these environment variables, then restart the shell:\n%1\n\nOnly %2 requires %3 to be installed.": {
+    "Set one of these environment variables, then restart the shell:\n%1\n\nOnly %2 requires %3 to be installed.": ""
   },
   "Set under Theme & colors, Derived color": {
     "Set under Theme & colors, Derived color": "تعيين تحت السمات والألوان، اللون المشتق"
@@ -7703,6 +7793,9 @@
   "Slanted": {
     "Slanted": "مائل"
   },
+  "Slide the bar away over fullscreen applications. Move the pointer to the screen edge to reveal it.": {
+    "Slide the bar away over fullscreen applications. Move the pointer to the screen edge to reveal it.": ""
+  },
   "Slideout": {
     "Slideout": "نافذة منزلقة"
   },
@@ -7789,6 +7882,9 @@
   },
   "Spacing": {
     "Spacing": "التباعد"
+  },
+  "Spacious": {
+    "Spacious": ""
   },
   "Speaker settings": {
     "Speaker settings": "إعدادات السماعات"
@@ -8006,6 +8102,9 @@
   "Switches to power saver at the low battery threshold": {
     "Switches to power saver at the low battery threshold": "يتحول إلى وضع توفير الطاقة عند وصول البطارية إلى حد منخفض"
   },
+  "Symbol": {
+    "Symbol": ""
+  },
   "Sync": {
     "Sync": "مزامنة"
   },
@@ -8141,14 +8240,8 @@
   "Terminal additional parameters": {
     "Terminal additional parameters": "معلمات الجهاز الإضافية"
   },
-  "Terminal fallback failed. Install a supported terminal emulator or run 'dms auth sync' manually.": {
-    "Terminal fallback failed. Install a supported terminal emulator or run 'dms auth sync' manually.": "فشل وضع بديل المحطة الطرفية. قم بتثبيت محاكي محطة طرفية مدعوم أو قم بتشغيل 'dms auth sync' يدوياً."
-  },
-  "Terminal fallback failed. Install one of the supported terminal emulators or run 'dms-greeter sync' manually.": {
-    "Terminal fallback failed. Install one of the supported terminal emulators or run 'dms-greeter sync' manually.": "فشل الاحتياط للطرفية. قم بتثبيت أحد محاكيات الطرفية المدعومة أو قم بتشغيل 'dms-greeter sync' يدوياً."
-  },
-  "Terminal fallback failed. Install one of the supported terminal emulators or run 'dms-greeter unlink' manually.": {
-    "Terminal fallback failed. Install one of the supported terminal emulators or run 'dms-greeter unlink' manually.": "فشلت محاكاة الطرفية الاحتياطية. قم بتثبيت أحد محاكيات الطرفية المدعومة أو قم بتشغيل 'dms-greeter unlink' يدوياً."
+  "Terminal fallback failed. Install one of the supported terminal emulators or run '%1' manually.": {
+    "Terminal fallback failed. Install one of the supported terminal emulators or run '%1' manually.": ""
   },
   "Terminal fallback opened. Complete authentication there; it will close automatically when done.": {
     "Terminal fallback opened. Complete authentication there; it will close automatically when done.": "تم فتح الاحطياط للطرفية. أكمل المصادقة هناك؛ سيتم إغلاقه تلقائيًا عند الانتهاء."
@@ -8189,11 +8282,14 @@
   "Text style": {
     "Text style": "نمط النص"
   },
+  "The %1 environment variable is not set or the socket is unavailable. Automated plugin management requires it.": {
+    "The %1 environment variable is not set or the socket is unavailable. Automated plugin management requires it.": ""
+  },
   "The Aqueous operation failed.": {
     "The Aqueous operation failed.": "فشلت عملية Aqueous."
   },
-  "The DMS_SOCKET environment variable is not set or the socket is unavailable. Automated plugin management requires the DMS_SOCKET.": {
-    "The DMS_SOCKET environment variable is not set or the socket is unavailable. Automated plugin management requires the DMS_SOCKET.": "متغير البيئة DMS_SOCKET غير معين أو أن المقبس غير متاح. تتطلب الإدارة التلقائية للملحقات وجود DMS_SOCKET."
+  "The Control Center opens at the cursor instead of its widget": {
+    "The Control Center opens at the cursor instead of its widget": ""
   },
   "The Default action only overrides priority": {
     "The Default action only overrides priority": "الإجراء الافتراضي يتجاوز الأولوية فقط"
@@ -8210,8 +8306,8 @@
   "The arrow points in the direction the wind is blowing. The label shows where it comes from.": {
     "The arrow points in the direction the wind is blowing. The label shows where it comes from.": "يشير السهم إلى اتجاه هبوب الرياح. بينما تظهر التسمية مصدر الرياح."
   },
-  "The below settings will modify your GTK and Qt settings. If you wish to preserve your current configurations, please back them up (qt5ct.conf|qt6ct.conf|qtengine/config.json and ~/.config/gtk-3.0|gtk-4.0).": {
-    "The below settings will modify your GTK and Qt settings. If you wish to preserve your current configurations, please back them up (qt5ct.conf|qt6ct.conf|qtengine/config.json and ~/.config/gtk-3.0|gtk-4.0).": "الإعدادات أدناه ستعدل إعدادات GTK و Qt الخاصة بك. إذا كنت ترغب في الاحتفاظ بتكويناتك الحالية، يرجى نسخها احتياطياً (qt5ct.conf|qt6ct.conf|qtengine/config.json و ~/.config/gtk-3.0|gtk-4.0)."
+  "The below settings will modify your GTK and Qt settings. If you wish to preserve your current configurations, please back them up (%1 and %2).": {
+    "The below settings will modify your GTK and Qt settings. If you wish to preserve your current configurations, please back them up (%1 and %2).": ""
   },
   "The compositor session changed. Discard this edit before starting a new one.": {
     "The compositor session changed. Discard this edit before starting a new one.": "تم تغيير جلسة الملحن. تجاهل هذا التعديل قبل بدء تعديل جديد."
@@ -8227,9 +8323,6 @@
   },
   "The fill shows today's precipitation probability.": {
     "The fill shows today's precipitation probability.": "تظهر التعبئة احتمالية هطول الأمطار اليوم."
-  },
-  "The greeter bundled with DMS is active (archinstall setup). It keeps working as is, but syncing theme and settings needs the standalone greeter. Install greetd-dms-greeter-bin from the AUR, then run Sync to migrate the login screen.": {
-    "The greeter bundled with DMS is active (archinstall setup). It keeps working as is, but syncing theme and settings needs the standalone greeter. Install greetd-dms-greeter-bin from the AUR, then run Sync to migrate the login screen.": "برنامج الترحيب (greeter) المرفق مع DMS نشط (إعداد archinstall). يستمر في العمل كما هو، ولكن مزامنة السمة والإعدادات تتطلب برنامج الترحيب المستقل. قم بتثبيت greetd-dms-greeter-bin من AUR، ثم قم بتشغيل المزامنة لنقل شاشة تسجيل الدخول."
   },
   "The highlighted marker shows the UV category: low, moderate, high, very high, or extreme.": {
     "The highlighted marker shows the UV category: low, moderate, high, very high, or extreme.": "تظهر العلامة المميزة فئة الأشعة فوق البنفسجية: منخفضة، معتدلة، عالية، عالية جداً، أو قصوى."
@@ -8318,8 +8411,8 @@
   "Themes": {
     "Themes": "السمات"
   },
-  "These add entries to the XDG autostart directory (~/.config/autostart/*.desktop)": {
-    "These add entries to the XDG autostart directory (~/.config/autostart/*.desktop)": "تضيف هذه إدخالات إلى دليل البدء التلقائي XDG (~/.config/autostart/*.desktop)"
+  "These add entries to the XDG autostart directory (%1)": {
+    "These add entries to the XDG autostart directory (%1)": ""
   },
   "They load with the next update check. Release notes are also published on GitHub.": {
     "They load with the next update check. Release notes are also published on GitHub.": "سيتم تحميلها عند فحص التحديث التالي. يتم نشر ملاحظات الإصدار أيضاً على GitHub."
@@ -8339,8 +8432,8 @@
   "This bar is the Island": {
     "This bar is the Island": "هذا الشريط هو الجزيرة"
   },
-  "This bind is overridden by config.kdl": {
-    "This bind is overridden by config.kdl": "هذا الربط تم تجاوزه بواسطة config.kdl"
+  "This bind is overridden by %1": {
+    "This bind is overridden by %1": ""
   },
   "This device": {
     "This device": "هذا الجهاز"
@@ -8351,8 +8444,8 @@
   "This display does not report VRR support": {
     "This display does not report VRR support": "هذه الشاشة لا تبلغ عن دعم VRR"
   },
-  "This install is still using hyprland.conf. Run dms setup to migrate before changing these settings.": {
-    "This install is still using hyprland.conf. Run dms setup to migrate before changing these settings.": "لا يزال هذا التثبيت يستخدم hyprland.conf. قم بتشغيل dms setup للترحيل قبل تغيير هذه الإعدادات."
+  "This install is still using %1. Run %2 to migrate before changing these settings.": {
+    "This install is still using %1. Run %2 to migrate before changing these settings.": ""
   },
   "This may take a few seconds": {
     "This may take a few seconds": "قد يستغرق هذا بضع ثوانٍ"
@@ -8363,11 +8456,8 @@
   "This output is disabled in the current profile": {
     "This output is disabled in the current profile": "هذا المخرج معطل في الملف الشخصي الحالي"
   },
-  "This plugin can": {
-    "This plugin can": "هذه الإضافة يمكنها"
-  },
-  "This plugin does not have 'settings_write' permission.\n\nAdd \"permissions\": [\"settings_read\", \"settings_write\"] to plugin.json": {
-    "This plugin does not have 'settings_write' permission.\n\nAdd \"permissions\": [\"settings_read\", \"settings_write\"] to plugin.json": "هذه الإضافة لا تملك إذن 'settings_write'. أضف \"permissions\": [\"settings_read\", \"settings_write\"] إلى ملف plugin.json"
+  "This plugin does not have '%1' permission.\n\nAdd %2 to %3": {
+    "This plugin does not have '%1' permission.\n\nAdd %2 to %3": ""
   },
   "This system cannot link settings live. Sync again after changing them.": {
     "This system cannot link settings live. Sync again after changing them.": "لا يمكن لهذا النظام ربط الإعدادات مباشرة. قم بالمزامنة مرة أخرى بعد تغييرها."
@@ -8474,11 +8564,11 @@
   "To Full": {
     "To Full": "كامل"
   },
-  "To sign in as a different user, log out and pick the account from the greeter. Creating a fresh session in parallel needs a multi-session greeter (greetd-flexiserver / GDM / LightDM).": {
-    "To sign in as a different user, log out and pick the account from the greeter. Creating a fresh session in parallel needs a multi-session greeter (greetd-flexiserver / GDM / LightDM).": "لتسجيل الدخول كمستخدم مختلف، قم بتسجيل الخروج واختر الحساب من شاشة الترحيب. إنشاء جلسة جديدة بالتوازي يتطلب شاشة ترحيب متعددة الجلسات (greetd-flexiserver / GDM / LightDM)."
+  "To sign in as a different user, log out and pick the account from the greeter. Creating a fresh session in parallel needs a multi-session greeter (%1).": {
+    "To sign in as a different user, log out and pick the account from the greeter. Creating a fresh session in parallel needs a multi-session greeter (%1).": ""
   },
-  "To use this DMS bind, remove or change the keybind in your config.kdl": {
-    "To use this DMS bind, remove or change the keybind in your config.kdl": "لاستخدام ربط DMS هذا، قم بإزالة أو تغيير ربط المفاتيح في ملف config.kdl"
+  "To use this DMS bind, remove or change the keybind in your %1": {
+    "To use this DMS bind, remove or change the keybind in your %1": ""
   },
   "Toast": {
     "Toast": "تنبيه منبثق"
@@ -8533,6 +8623,9 @@
   },
   "Tools": {
     "Tools": "الأدوات"
+  },
+  "Tooltip": {
+    "Tooltip": ""
   },
   "Top": {
     "Top": "أعلى"
@@ -8888,6 +8981,9 @@
   "Use system PAM authentication": {
     "Use system PAM authentication": "استخدم مصادقة PAM الخاصة بالنظام"
   },
+  "Use the scaled battery level for alert thresholds and percentages": {
+    "Use the scaled battery level for alert thresholds and percentages": ""
+  },
   "User": {
     "User": "مستخدم"
   },
@@ -9173,8 +9269,8 @@
   "Wi-Fi, Ethernet, VPN": {
     "Wi-Fi, Ethernet, VPN": "واي فاي، إيثرنت، VPN"
   },
-  "WiFi QR code for ": {
-    "WiFi QR code for ": "رمز QR لشبكة WiFi لـ "
+  "WiFi QR code for %1": {
+    "WiFi QR code for %1": ""
   },
   "WiFi disabled": {
     "WiFi disabled": "الWi-Fi غير مفعل"
@@ -9347,9 +9443,6 @@
   "You have unsaved changes. Save before continuing?": {
     "You have unsaved changes. Save before continuing?": "لديك تغييرات غير محفوظة. هل تريد الحفظ قبل المتابعة؟"
   },
-  "You need to set one of:\nQT_QPA_PLATFORMTHEME=gtk3 OR\nQT_QPA_PLATFORMTHEME=qt6ct OR\nQT_QPA_PLATFORMTHEME=qtengine\nas environment variables, and then restart the shell.\n\nOnly qt6ct requires qt6ct-kde to be installed.": {
-    "You need to set one of:\nQT_QPA_PLATFORMTHEME=gtk3 OR\nQT_QPA_PLATFORMTHEME=qt6ct OR\nQT_QPA_PLATFORMTHEME=qtengine\nas environment variables, and then restart the shell.\n\nOnly qt6ct requires qt6ct-kde to be installed.": "تحتاج إلى تعيين واحد مما يلي: QT_QPA_PLATFORMTHEME=gtk3 أو QT_QPA_PLATFORMTHEME=qt6ct أو QT_QPA_PLATFORMTHEME=qtengine كمتغيرات بيئة، ثم إعادة تشغيل الصدفة (shell). يتطلب qt6ct فقط تثبيت qt6ct-kde."
-  },
   "You'll enter your password at the greeter after the next reboot.": {
     "You'll enter your password at the greeter after the next reboot.": "ستدخل كلمة مرورك في شاشة الترحيب بعد إعادة التشغيل التالية."
   },
@@ -9428,9 +9521,6 @@
   "detached": {
     "detached": "غير متصل"
   },
-  "dgop not available": {
-    "dgop not available": "dgop غير متاح"
-  },
   "direct": {
     "direct": "مباشر"
   },
@@ -9440,8 +9530,11 @@
   "display rotation option": {
     "Normal": "عادي"
   },
-  "dms-greeter is not installed. Install the dms-greeter package to manage the greeter.": {
-    "dms-greeter is not installed. Install the dms-greeter package to manage the greeter.": "برنامج dms-greeter غير مثبت. قم بتثبيت حزمة dms-greeter لإدارة شاشة الترحيب."
+  "duration, 2 to 4 form (2, 3, 4, 22, 23, ...) for languages that need one, %1 is a number; leave empty to reuse the plural": {
+    "%1 days": "",
+    "%1 hours": "",
+    "%1 minutes": "",
+    "%1 seconds": ""
   },
   "e.g. /usr/bin/my-script --flag": {
     "e.g. /usr/bin/my-script --flag": "مثال: /usr/bin/my-script --flag"
@@ -9500,9 +9593,6 @@
   "loginctl integration": {
     "loginctl integration": "تكامل loginctl"
   },
-  "loginctl not available - lock integration requires DMS socket connection": {
-    "loginctl not available - lock integration requires DMS socket connection": "loginctl غير متاح - يتطلب تكامل القفل اتصالاً لDMS socket"
-  },
   "mango: config reloaded": {
     "mango: config reloaded": "mango: تمت إعادة تحميل التكوين"
   },
@@ -9515,17 +9605,8 @@
   "mangowc GitHub": {
     "mangowc GitHub": "مستودع mangowc على GitHub"
   },
-  "matugen not available or disabled - cannot apply %1 colors": {
-    "matugen not available or disabled - cannot apply %1 colors": "matugen غير متاح أو معطل - لا يمكن تطبيق ألوان %1"
-  },
-  "matugen not found - install matugen package for dynamic theming": {
-    "matugen not found - install matugen package for dynamic theming": "لم يتم العثور على matugen - قم بتثبيت حزمة matugen للسمات الديناميكية"
-  },
   "missing program": {
     "Requires %1": "يتطلب %1"
-  },
-  "mpris-proxy is running and will create duplicate Bluetooth players. Disable it with: systemctl --user disable --now mpris-proxy.service": {
-    "mpris-proxy is running and will create duplicate Bluetooth players. Disable it with: systemctl --user disable --now mpris-proxy.service": "mpris-proxy قيد التشغيل وسيقوم بإنشاء مشغلات بلوتوث مكررة. قم بتعطيله باستخدام: systemctl --user disable --now mpris-proxy.service"
   },
   "ms": {
     "ms": "ms"
@@ -9547,9 +9628,6 @@
   },
   "niri shortcuts config": {
     "niri shortcuts config": "تكوين اختصارات niri"
-  },
-  "niri/dms Discord": {
-    "niri/dms Discord": "ديسكورد niri/dms"
   },
   "niri: config reloaded": {
     "niri: config reloaded": "niri: تم إعادة تحميل التكوين"
@@ -9577,9 +9655,6 @@
   },
   "primary network connection label": {
     "Primary": "أساسي"
-  },
-  "procs": {
-    "procs": "عمليات"
   },
   "pt": {
     "pt": "pt"

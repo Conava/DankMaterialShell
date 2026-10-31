@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"math"
 	"os"
 	"os/exec"
@@ -20,7 +19,6 @@ import (
 
 	"github.com/duxlabs-dev/dux-shell/core/internal/dank16"
 	"github.com/duxlabs-dev/dux-shell/core/internal/log"
-	"github.com/duxlabs-dev/dux-shell/core/internal/mangoconf"
 	"github.com/duxlabs-dev/dux-shell/core/internal/utils"
 	"github.com/godbus/dbus/v5"
 	"github.com/lucasb-eyer/go-colorful"
@@ -44,7 +42,6 @@ const (
 	TemplateKindGTK
 	TemplateKindVSCode
 	TemplateKindEmacs
-	TemplateKindMango
 )
 
 type TemplateDef struct {
@@ -63,7 +60,7 @@ var templateRegistry = []TemplateDef{
 	{ID: "gtk", Kind: TemplateKindGTK, RunUnconditionally: true},
 	{ID: "niri", Commands: []string{"niri"}, ConfigFile: "niri.toml"},
 	{ID: "hyprland", Commands: []string{"Hyprland"}, ConfigFile: "hyprland.toml"},
-	{ID: "mangowc", Commands: []string{"mango"}, ConfigFile: "mangowc.toml", RequiredEnv: "MANGO_INSTANCE_SIGNATURE", Kind: TemplateKindMango},
+	{ID: "mangowc", Commands: []string{"mango"}, ConfigFile: "mangowc.toml", RequiredEnv: "MANGO_INSTANCE_SIGNATURE"},
 	{ID: "qt5ct", Commands: []string{"qt5ct"}, ConfigFile: "qt5ct.toml"},
 	{ID: "qt6ct", Commands: []string{"qt6ct"}, ConfigFile: "qt6ct.toml"},
 	{ID: "fcitx5", Commands: []string{"fcitx5"}, ConfigDirs: []string{"fcitx5"}, ConfigFile: "fcitx5.toml"},
@@ -667,7 +664,7 @@ func userConfigSection(opts *Options) string {
 	if err != nil {
 		return "[config]\n\n"
 	}
-	section := extractTOMLSection(string(data), "[config]", "[templates]")
+	section := extractTOMLSection(string(data), "[config]", "\n[templates")
 	if section == "" {
 		return "[config]\n\n"
 	}
@@ -725,12 +722,6 @@ output_path = '%s'
 			for _, editor := range vscodeEditors {
 				appendVSCodeConfig(cfgFile, editor.name, editor.extensionsDir(homeDir), opts.ShellDir)
 			}
-		case TemplateKindMango:
-			configFile := tmpl.ConfigFile
-			if mangoconf.Detect() == mangoconf.Snake {
-				configFile = "mangowc-snake.toml"
-			}
-			appendConfig(opts, cfgFile, tmpl.Commands, tmpl.Flatpaks, tmpl.ConfigDirs, configFile)
 		case TemplateKindEmacs:
 			if utils.EmacsConfigDir() != "" {
 				appendConfig(opts, cfgFile, tmpl.Commands, tmpl.Flatpaks, tmpl.ConfigDirs, tmpl.ConfigFile)
@@ -749,7 +740,7 @@ output_path = '%s'
 
 	if opts.RunUserTemplates {
 		if data, err := os.ReadFile(userConfigPath); err == nil {
-			templatesSection := extractTOMLSection(string(data), "[templates]", "")
+			templatesSection := extractTOMLSection("\n"+string(data), "\n[templates", "\n[config]")
 			if templatesSection != "" {
 				cfgFile.WriteString(templatesSection)
 				cfgFile.WriteString("\n")
@@ -965,6 +956,7 @@ var vscodeEditors = []vscodeEditor{
 	{"cursor", ".cursor"},
 	{"windsurf", ".windsurf"},
 	{"positron", ".positron"},
+	{"antigravity", ".antigravity-ide"},
 	{"vscode-insiders", ".vscode-insiders"},
 }
 
@@ -1154,21 +1146,32 @@ func runMatugen(baseArgs []string, sourceMode string) error {
 
 // matugen's stderr is echoed as before and its tail travels in the error, so a failure
 // reaching the shell through the socket still names the broken template or option.
+// It goes through a file, not a pipe: with a pipe, Wait blocks until every hook
+// child that inherited stderr exits, and a backgrounded post_hook never does (#3901).
 func execMatugen(args []string) error {
+	stderrFile, err := os.CreateTemp("", "matugen-stderr-*")
+	if err != nil {
+		return fmt.Errorf("matugen: %w", err)
+	}
+	defer os.Remove(stderrFile.Name())
+	defer stderrFile.Close()
+
 	cmd := exec.Command("matugen", args...)
 	cmd.Env = utils.EnvWithUserBinPath(nil)
 	cmd.Stdout = os.Stdout
-	var stderr bytes.Buffer
-	cmd.Stderr = io.MultiWriter(os.Stderr, &stderr)
-	err := cmd.Run()
-	if err == nil {
+	cmd.Stderr = stderrFile
+	runErr := cmd.Run()
+
+	stderr, _ := os.ReadFile(stderrFile.Name())
+	os.Stderr.Write(stderr)
+	if runErr == nil {
 		return nil
 	}
-	tail := stderrTail(stderr.String(), 6)
+	tail := stderrTail(string(stderr), 6)
 	if tail == "" {
-		return fmt.Errorf("matugen: %w", err)
+		return fmt.Errorf("matugen: %w", runErr)
 	}
-	return fmt.Errorf("matugen: %w\n%s", err, tail)
+	return fmt.Errorf("matugen: %w\n%s", runErr, tail)
 }
 
 var ansiEscapeRe = regexp.MustCompile(`\x1b\[[0-9;]*[a-zA-Z]`)
@@ -1218,11 +1221,7 @@ func writeDryRunConfig(opts *Options) (string, error) {
 	}
 	defer cfgFile.Close()
 
-	section := userConfigSection(opts)
-	if idx := strings.Index(section, "\n[templates"); idx != -1 {
-		section = section[:idx+1]
-	}
-	cfgFile.WriteString(section)
+	cfgFile.WriteString(userConfigSection(opts))
 	cfgFile.WriteString("[templates]\n")
 	return cfgFile.Name(), nil
 }

@@ -60,7 +60,7 @@ Loader {
         opened: false
         surfaceColor: Theme.hostSurface
         title: ProcessActions.title(root.action, root.process)
-        supportingText: (root.process?.command ?? "") + " (" + I18n.tr("PID") + " " + (root.process?.pid ?? 0) + ")"
+        supportingText: (root.process?.command ?? "") + " (" + I18n.tr("PID %1", "%1 is a process id").arg(root.process?.pid ?? 0) + ")"
         onAccepted: root.choose(root.offerRestart ? "restart" : root.action)
         onRejected: root.close()
         onActiveChanged: {

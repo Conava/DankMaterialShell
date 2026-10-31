@@ -18,14 +18,13 @@ import "settings/SettingsStore.js" as Store
 import "../DCommon/Common/settings/SpecUtil.js" as SpecUtil
 import "settings/BarWidgetDefaults.js" as WidgetDefaults
 import "settings/DockConfig.js" as DockConfig
+import "settings/DensityPresets.js" as DensityPresets
 
 Singleton {
     id: root
     readonly property var log: Log.scoped("SettingsData")
 
     readonly property int settingsConfigVersion: 42
-
-    readonly property bool isGreeterMode: Quickshell.env("DMS_RUN_GREETER") === "1" || Quickshell.env("DMS_RUN_GREETER") === "true"
 
     enum Position {
         Top,
@@ -185,6 +184,8 @@ Singleton {
     property string hostSurfaceCustomColor: Spec.SPEC.hostSurfaceCustomColor.def
     property string cardSurfaceColor: Spec.SPEC.cardSurfaceColor.def
     property string cardSurfaceCustomColor: Spec.SPEC.cardSurfaceCustomColor.def
+    property string tooltipSurfaceColor: Spec.SPEC.tooltipSurfaceColor.def
+    property string tooltipSurfaceCustomColor: Spec.SPEC.tooltipSurfaceCustomColor.def
     property string chipSurfaceColor: Spec.SPEC.chipSurfaceColor.def
     property string chipSurfaceCustomColor: Spec.SPEC.chipSurfaceCustomColor.def
     property string chipSurfaceNestedColor: Spec.SPEC.chipSurfaceNestedColor.def
@@ -218,6 +219,9 @@ Singleton {
     property int hyprlandBlurHazeIridescence: Spec.SPEC.hyprlandBlurHazeIridescence.def
     property int hyprlandBlurRippleStrength: Spec.SPEC.hyprlandBlurRippleStrength.def
     property int hyprlandBlurWaterStrength: Spec.SPEC.hyprlandBlurWaterStrength.def
+    property int hyprlandBlurDropsSpeed: Spec.SPEC.hyprlandBlurDropsSpeed.def
+    property int hyprlandBlurHeatShimmerSpeed: Spec.SPEC.hyprlandBlurHeatShimmerSpeed.def
+    property bool hyprlandBlurProportional: Spec.SPEC.hyprlandBlurProportional.def
     property bool hyprlandGlowEnabled: Spec.SPEC.hyprlandGlowEnabled.def
     property int hyprlandGlowRange: Spec.SPEC.hyprlandGlowRange.def
     property int hyprlandGlowRenderPower: Spec.SPEC.hyprlandGlowRenderPower.def
@@ -241,12 +245,18 @@ Singleton {
     property string hyprlandScrollingDirection: Spec.SPEC.hyprlandScrollingDirection.def
     property int hyprlandScrollingColumnWidth: Spec.SPEC.hyprlandScrollingColumnWidth.def
     property bool hyprlandScrollingFullscreenOneColumn: Spec.SPEC.hyprlandScrollingFullscreenOneColumn.def
-    property bool hyprlandScrollingFollowFocus: Spec.SPEC.hyprlandScrollingFollowFocus.def
+    property int hyprlandScrollingFollowFocus: Spec.SPEC.hyprlandScrollingFollowFocus.def
+    property bool hyprlandDragCenterWindow: Spec.SPEC.hyprlandDragCenterWindow.def
+    property int hyprlandWorkspaceBackAndForth: Spec.SPEC.hyprlandWorkspaceBackAndForth.def
+    property int hyprlandExitWindowRetainsFullscreen: Spec.SPEC.hyprlandExitWindowRetainsFullscreen.def
+    property string hyprlandBellSound: Spec.SPEC.hyprlandBellSound.def
     property int mangoLayoutGapsOverride: Spec.SPEC.mangoLayoutGapsOverride.def
     property int mangoLayoutGapsOutOverride: Spec.SPEC.mangoLayoutGapsOutOverride.def
     property int mangoLayoutRadiusOverride: Spec.SPEC.mangoLayoutRadiusOverride.def
     property int mangoLayoutBorderSize: Spec.SPEC.mangoLayoutBorderSize.def
     property int focusFollowsMouse: Spec.SPEC.focusFollowsMouse.def
+    property bool hyprlandSwallowFocusClick: Spec.SPEC.hyprlandSwallowFocusClick.def
+    property bool hyprlandTabletEnabled: Spec.SPEC.hyprlandTabletEnabled.def
     property string mouseAccelProfile: Spec.SPEC.mouseAccelProfile.def
     property real mouseAccelSpeed: Spec.SPEC.mouseAccelSpeed.def
     property bool mouseLeftHanded: Spec.SPEC.mouseLeftHanded.def
@@ -308,6 +318,8 @@ Singleton {
     onScrollbarsEnabledChanged: saveSettings()
     property int motionEffect: SettingsData.AnimationEffect.Standard
     onMotionEffectChanged: saveSettings()
+    property string density: Spec.SPEC.density.def
+    property string interfaceStyle: Spec.SPEC.interfaceStyle.def
     property bool m3ElevationEnabled: Spec.SPEC.m3ElevationEnabled.def
     onM3ElevationEnabledChanged: saveSettings()
     property int m3ElevationIntensity: Spec.SPEC.m3ElevationIntensity.def
@@ -337,6 +349,8 @@ Singleton {
     property real foregroundLayerTransparency: Spec.SPEC.foregroundLayerTransparency.def
     property real blurLayerOutlineOpacity: Spec.SPEC.blurLayerOutlineOpacity.def
     onBlurLayerOutlineOpacityChanged: saveSettings()
+    property real sectionDividerOpacity: Spec.SPEC.sectionDividerOpacity.def
+    onSectionDividerOpacityChanged: saveSettings()
     property bool blurBorderEnabled: Spec.SPEC.blurBorderEnabled.def
     onBlurBorderEnabledChanged: saveSettings()
     property string blurBorderColor: Spec.SPEC.blurBorderColor.def
@@ -516,6 +530,10 @@ Singleton {
         },
         {
             "id": "notifications",
+            "enabled": false
+        },
+        {
+            "id": "settings",
             "enabled": false
         }
     ]
@@ -727,6 +745,8 @@ Singleton {
     property string batteryProfileName: Spec.SPEC.batteryProfileName.def
     property int batteryPostLockMonitorTimeout: Spec.SPEC.batteryPostLockMonitorTimeout.def
     property int batteryChargeLimit: Spec.SPEC.batteryChargeLimit.def
+    property bool batteryScaleToChargeLimit: Spec.SPEC.batteryScaleToChargeLimit.def
+    property bool batteryScaleAlertThresholds: Spec.SPEC.batteryScaleAlertThresholds.def
     property bool batteryNotifyChargeLimit: Spec.SPEC.batteryNotifyChargeLimit.def
     property int batteryCriticalThreshold: Spec.SPEC.batteryCriticalThreshold.def
     property bool batteryCriticalAnimation: Spec.SPEC.batteryCriticalAnimation.def
@@ -877,8 +897,10 @@ Singleton {
     // One slot per edge; a dot floats, so it never takes one.
     readonly property int edgeBarConfigCount: (barConfigs || []).filter(cfg => cfg && !isDotBarConfig(cfg)).length
     readonly property var dotBarConfig: (barConfigs || []).find(cfg => isDotBarConfig(cfg)) ?? null
-    readonly property var islandDefaults: WidgetDefaults.ISLAND_DEFAULTS
+    readonly property var islandDefaults: Object.assign({}, WidgetDefaults.ISLAND_DEFAULTS, DensityPresets.values("island", density))
     readonly property var islandWidgetDefaults: WidgetDefaults.DEFAULTS.island
+    readonly property real barInnerPaddingDefault: barConfigDefault("innerPadding")
+    readonly property real barWidgetPaddingDefault: barConfigDefault("widgetPadding")
 
     function islandSettings(bc) {
         if (!bc)
@@ -1110,6 +1132,8 @@ Singleton {
     property bool osdMicMuteEnabled: Spec.SPEC.osdMicMuteEnabled.def
     property bool osdMicVolumeEnabled: Spec.SPEC.osdMicVolumeEnabled.def
     property bool osdCapsLockEnabled: Spec.SPEC.osdCapsLockEnabled.def
+    property bool osdNumLockEnabled: Spec.SPEC.osdNumLockEnabled.def
+    property bool osdKeyboardLayoutEnabled: Spec.SPEC.osdKeyboardLayoutEnabled.def
     property bool osdTouchpadEnabled: Spec.SPEC.osdTouchpadEnabled.def
     property bool osdPowerProfileEnabled: Spec.SPEC.osdPowerProfileEnabled.def
     property bool osdAudioOutputEnabled: Spec.SPEC.osdAudioOutputEnabled.def
@@ -1128,6 +1152,7 @@ Singleton {
     property string customPowerActionPowerOff: Spec.SPEC.customPowerActionPowerOff.def
     property var customPowerButtons: Spec.SPEC.customPowerButtons.def
     property var powerMenuBootEntries: Spec.SPEC.powerMenuBootEntries.def
+    property bool powerMenuFirmwareSetup: Spec.SPEC.powerMenuFirmwareSetup.def
 
     property bool updaterCheckOnStart: Spec.SPEC.updaterCheckOnStart.def
     property bool updaterUseCustomCommand: Spec.SPEC.updaterUseCustomCommand.def
@@ -1435,8 +1460,6 @@ Singleton {
     signal notificationPopupsInvalidated
 
     function refreshAuthAvailability() {
-        if (isGreeterMode)
-            return;
         Processes.detectAuthCapabilities();
     }
 
@@ -1506,8 +1529,6 @@ Singleton {
     }
 
     function checkIconThemeDrift() {
-        if (isGreeterMode)
-            return;
         if (resolveIconTheme() === "System Default")
             return;
         if (!SessionData.lastAppliedIconTheme)
@@ -1620,9 +1641,7 @@ Singleton {
         fi
         done
 
-        ${GSettings.setCmd("org.gnome.desktop.interface", "icon-theme", gtkThemeName)} || true
-
-        pkill -HUP -f 'gtk' 2>/dev/null || true`;
+        ${GSettings.setCmd("org.gnome.desktop.interface", "icon-theme", gtkThemeName)} || true`;
 
         Quickshell.execDetached(["sh", "-lc", configScript]);
     }
@@ -1664,8 +1683,6 @@ Singleton {
     }
 
     function scheduleAuthApply() {
-        if (isGreeterMode)
-            return;
         Qt.callLater(() => {
             Processes.settingsRoot = root;
             Processes.scheduleAuthApply();
@@ -1673,8 +1690,6 @@ Singleton {
     }
 
     function scheduleGreeterAutoLoginSync() {
-        if (isGreeterMode)
-            return;
         Qt.callLater(() => {
             Processes.settingsRoot = root;
             Processes.scheduleGreeterAutoLoginSync();
@@ -1689,8 +1704,6 @@ Singleton {
     }
 
     function markGreeterSyncPending(who, key, oldValue) {
-        if (isGreeterMode)
-            return;
         if (!(key in SessionData.greeterSyncBaseline)) {
             var baseline = Object.assign({}, SessionData.greeterSyncBaseline);
             baseline[key] = oldValue;
@@ -1734,7 +1747,33 @@ Singleton {
         saveSettings();
     }
 
+    function applyDensityPresets(who, key, previous) {
+        // Theme renders an unknown level as comfortable.
+        const from = DensityPresets.LEVELS.includes(previous) ? previous : "comfortable";
+        const writes = Object.assign({
+            "barConfigs": DensityPresets.transitionAll(barConfigs, "bar", from, density),
+            "dockConfigs": DensityPresets.transitionAll(dockConfigs, "dock", from, density)
+        }, DensityPresets.transition({
+            "frameThickness": frameThickness,
+            "frameBarSize": frameBarSize
+        }, "frame", from, density));
+        for (const name in writes) {
+            if (writes[name] !== null && !isManaged(name))
+                root[name] = writes[name];
+        }
+    }
+
+    function applyInterfaceStyle(who, key, previous) {
+        const from = Store.styleDefault("radiusMode", previous) ?? Spec.SPEC.radiusMode.def;
+        if (radiusMode !== from || isManaged("radiusMode"))
+            return;
+        radiusMode = presetDefault("radiusMode") ?? Spec.SPEC.radiusMode.def;
+        updateCompositorLayout();
+    }
+
     readonly property var _hooks: ({
+            "applyDensityPresets": applyDensityPresets,
+            "applyInterfaceStyle": applyInterfaceStyle,
             "applyStoredTheme": applyStoredTheme,
             "regenSystemThemes": regenSystemThemes,
             "updateCompositorLayout": updateCompositorLayout,
@@ -1750,33 +1789,52 @@ Singleton {
         })
 
     function set(key, value) {
-        if (key === "cornerRadius") {
-            setCornerRadius(value);
-            return;
+        if (isManaged(key)) {
+            log.warn("Refusing to change a setting managed by administrator policy:", key);
+            return false;
         }
+        if (key === "density" && !DensityPresets.LEVELS.includes(value)) {
+            log.warn("Refusing an unknown density:", value);
+            return false;
+        }
+        if (key === "interfaceStyle" && !["expressive", "classic"].includes(value)) {
+            log.warn("Refusing an unknown interface style:", value);
+            return false;
+        }
+        if (key === "cornerRadius")
+            return setCornerRadius(value);
         if (key === "radiusStrength")
             value = Shape.normalizeStrength(value);
         Spec.set(root, key, value, saveSettings, _hooks);
         if (key === "frameEnabled" && value)
             clearIslandBars();
+        return true;
     }
 
     function hasSetting(key) {
         return key in Spec.SPEC;
     }
 
+    function isManaged(key) {
+        return key in AdminPolicy.lockSettings;
+    }
+
+    function presetDefault(key) {
+        return DensityPresets.value("frame", key, density) ?? Store.styleDefault(key, interfaceStyle);
+    }
+
     function specDefault(key) {
-        return SpecUtil.cloneDef(Spec.SPEC[key]?.def);
+        return presetDefault(key) ?? SpecUtil.cloneDef(Spec.SPEC[key]?.def);
     }
 
     function isDefault(keys) {
-        return keys.every(key => !(key in Spec.SPEC) || SpecUtil.isDefault(root[key], Spec.SPEC[key].def));
+        return keys.every(key => !(key in Spec.SPEC) || SpecUtil.isDefault(root[key], presetDefault(key) ?? Spec.SPEC[key].def));
     }
 
     function resetToDefault(keys) {
         for (const key of keys) {
-            if (key in Spec.SPEC)
-                Spec.set(root, key, null, saveSettings, _hooks);
+            if (key in Spec.SPEC && !isManaged(key))
+                Spec.set(root, key, presetDefault(key) ?? null, saveSettings, _hooks);
         }
     }
 
@@ -1816,11 +1874,11 @@ Singleton {
     }
 
     function barConfigDefault(field) {
-        return Spec.SPEC.barConfigs.def[0][field];
+        return DensityPresets.value("bar", field, density) ?? Spec.SPEC.barConfigs.def[0][field];
     }
 
     function dockConfigDefaults() {
-        return DockConfig.create("", "");
+        return Object.assign(DockConfig.create("", ""), DensityPresets.values("dock", density));
     }
 
     // Frame mode hosts bars inside the frame surface, which has nowhere to put an edge island; a dot floats over it.
@@ -1839,8 +1897,8 @@ Singleton {
         let obj = _getSettingsObjectFromFiles();
         let loadedSettings = JSON.stringify(obj);
 
-        const oldVersion = obj?.configVersion ?? 0;
-        if (oldVersion > settingsConfigVersion && !isGreeterMode) {
+        const oldVersion = obj?.configVersion ?? settingsConfigVersion;
+        if (oldVersion > settingsConfigVersion) {
             newerSettingsBackup.path = `${_configDir}/dms/settings.v${oldVersion}.json`;
             newerSettingsBackup.setText(JSON.stringify(obj, null, 2));
         }
@@ -1887,7 +1945,7 @@ Singleton {
         const prevFrameEnabled = frameEnabled;
         const prevFrameMode = frameMode;
         unsavedChanges = loadedSettings !== JSON.stringify(obj);
-        Store.parse(root, obj);
+        Store.parse(root, Object.assign(obj, AdminPolicy.lockSettings));
 
         // set() enforces this pair, but a hand-edited settings bypass set() entirely.
         if (frameEnabled)
@@ -2042,6 +2100,8 @@ Singleton {
             const file = _settingsFiles.get(path);
             const fileSettings = file.getSettings();
             for (const setting in fileSettings) {
+                if (isManaged(setting))
+                    continue;
                 if (!(setting in settings)) {
                     delete fileSettings[setting];
                     continue;
@@ -2056,23 +2116,21 @@ Singleton {
         }
 
         for (const setting in settings) {
-            if (!savedSettings.has(setting)) {
+            if (!savedSettings.has(setting) && !isManaged(setting)) {
                 splitSettings[defaultSettingsFile.filePath][setting] = settings[setting];
             }
         }
         return splitSettings;
     }
     function saveSettings() {
-        if (isGreeterMode || _loading || !_hasLoaded)
+        if (_loading || !_hasLoaded)
             return;
         unsavedUserChanges = true;
         settingsSaveDebounce.restart();
     }
     function _saveSettings(userChanges) {
         let reason = null;
-        if (isGreeterMode) {
-            reason = "running in greeter mode.";
-        } else if (_loading) {
+        if (_loading) {
             reason = "some files are being loaded";
         } else if (_parseError) {
             reason = "failed to parse settings.";
@@ -2092,7 +2150,7 @@ Singleton {
     }
 
     function savePluginSettings() {
-        if (isGreeterMode || _pluginSettingsLoading || _pluginParseError)
+        if (_pluginSettingsLoading || _pluginParseError)
             return;
         pluginSettingsFile.setText(JSON.stringify(pluginSettings, null, 2));
     }
@@ -2402,8 +2460,8 @@ Singleton {
         let name = I18n.tr("Dock");
         let number = 2;
         while (dockConfigs.some(config => config.name === name))
-            name = I18n.tr("Dock") + " " + number++;
-        const config = DockConfig.create(id, name);
+            name = I18n.tr("Dock %1", "generated dock name, %1 is a number").arg(number++);
+        const config = Object.assign(DockConfig.create(id, name), DensityPresets.values("dock", density));
         const edge = firstFreeDockEdge(id, config.screenPreferences);
         config.enabled = edge >= 0;
         config.position = Math.max(SettingsData.Position.Top, edge);
@@ -2859,6 +2917,9 @@ Singleton {
             id: "dot" + Date.now(),
             name: I18n.tr("Dot", "bar layout: free-floating dot that opens island activities"),
             enabled: true,
+            // A hidden or auto-hiding base bar would switch off the dot's OSD and notifications, and bar IPC refuses dot configs.
+            visible: true,
+            autoHide: false,
             island: false,
             dot: true,
             screenPreferences: ["all"],
@@ -3094,7 +3155,7 @@ Singleton {
     }
 
     function setCornerRadius(radius) {
-        set("radiusStrength", Shape.strengthFromRadius(radius));
+        return set("radiusStrength", Shape.strengthFromRadius(radius));
     }
 
     function setWeatherLocation(displayName, coordinates) {
@@ -3705,14 +3766,14 @@ Singleton {
                 return;
             }
 
-            settings = newSettings;
+            settings = JSON.parse(newSettingsJson);
             fileUnsavedUserChanges = fileUnsavedUserChanges || userChanges;
 
             selfWrite = true;
             settingsFileView.setText(newSettingsJson);
         }
         function getSettings() {
-            return Object.assign({}, settings);
+            return JSON.parse(JSON.stringify(settings));
         }
 
         property Timer timer: Timer {
@@ -3725,11 +3786,11 @@ Singleton {
         property FileView fileView: FileView {
             id: settingsFileView
 
-            path: isGreeterMode ? "" : filePath
+            path: filePath
             blockLoading: false
             blockWrites: true
             atomicWrites: true
-            watchChanges: !isGreeterMode
+            watchChanges: true
             onFileChanged: {
                 if (selfWrite) {
                     selfWrite = false;
@@ -3740,9 +3801,6 @@ Singleton {
                 }
             }
             onLoaded: {
-                if (isGreeterMode) {
-                    return;
-                }
                 isLoading = true;
                 _loading = true;
                 const hadParseFailed = hasParseFailed;
@@ -3776,9 +3834,6 @@ Singleton {
                 }
             }
             onLoadFailed: error => {
-                if (isGreeterMode) {
-                    return;
-                }
                 isLoading = false;
                 _loading = _anySettingsFile(file => file.isLoading);
                 if (error === FileViewError.FileNotFound) {
@@ -3922,7 +3977,7 @@ Singleton {
     }
 
     property bool _settingsFolderExists: false
-    property bool _settingsFolderChecked: isGreeterMode
+    property bool _settingsFolderChecked: false
     function _syncSettingsFilesModels() {
         if (!_settingsFolderChecked) {
             settingsFilesModelSyncDebounce.restart();
@@ -3963,7 +4018,6 @@ Singleton {
     }
     Loader {
         id: settingsFolderLoader
-        active: !isGreeterMode
         function unloadModel() {
             active = false;
         }
@@ -4012,59 +4066,6 @@ Singleton {
         }
     }
 
-    readonly property string _greeterCacheDir: Quickshell.env("DMS_GREET_CFG_DIR") || "/var/cache/dms-greeter"
-
-    property string greeterSettingsBaseDir: root._greeterCacheDir
-
-    function setGreeterSettingsBaseDir(dir) {
-        const next = dir || root._greeterCacheDir;
-        if (greeterSettingsBaseDir === next)
-            return;
-        greeterSettingsBaseDir = next;
-        if (isGreeterMode)
-            greeterSettingsFile.reload();
-    }
-
-    function resetGreeterSettingsBaseDir() {
-        setGreeterSettingsBaseDir(root._greeterCacheDir);
-    }
-
-    function loadGreeterSettings(txt) {
-        _loading = true;
-        _hasLoaded = false;
-        try {
-            Store.parse(root, (txt && txt.trim()) ? JSON.parse(txt) : {});
-            _parseError = false;
-        } catch (e) {
-            _parseError = true;
-            log.error("Failed to parse greeter settings.json:", e.message);
-            Store.parse(root, {});
-        } finally {
-            _loading = false;
-        }
-        _hasLoaded = true;
-        applyStoredTheme();
-    }
-
-    FileView {
-        id: greeterSettingsFile
-
-        path: isGreeterMode && root.greeterSettingsBaseDir ? (root.greeterSettingsBaseDir + "/settings.json") : ""
-        preload: isGreeterMode
-        blockLoading: false
-        blockWrites: true
-        watchChanges: false
-        printErrors: false
-        onLoaded: {
-            if (isGreeterMode)
-                loadGreeterSettings(greeterSettingsFile.text());
-        }
-        onLoadFailed: {
-            if (isGreeterMode)
-                loadGreeterSettings("");
-        }
-    }
-
     // Our first save drops the keys a newer shell wrote, so its settings are kept for going back.
     FileView {
         id: newerSettingsBackup
@@ -4078,21 +4079,17 @@ Singleton {
     FileView {
         id: pluginSettingsFile
 
-        path: isGreeterMode ? "" : pluginSettingsPath
+        path: pluginSettingsPath
         blockLoading: true
         blockWrites: true
         atomicWrites: true
         printErrors: false
-        watchChanges: !isGreeterMode
+        watchChanges: true
         onLoaded: {
-            if (isGreeterMode)
-                return;
             pluginSettingsFileExists = true;
             parsePluginSettings(pluginSettingsFile.text());
         }
         onLoadFailed: error => {
-            if (isGreeterMode)
-                return;
             const msg = String(error || "");
             const missing = _isMissingPluginSettingsError(error);
             pluginSettingsFileExists = !missing;

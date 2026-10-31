@@ -419,7 +419,7 @@ Item {
         }
 
         function close(): string {
-            const islandClosed = SettingsData.islandDashActivities.filter(activity => PopoutService.closeIslandActivity(activity)).length > 0;
+            const islandClosed = [...SettingsData.islandDashActivities, "wellbeing"].filter(activity => PopoutService.closeIslandActivity(activity)).length > 0;
             if (root.dankDashPopoutLoaderRef.item)
                 root.dankDashPopoutLoaderRef.item.dashVisible = false;
             return islandClosed || root.dankDashPopoutLoaderRef.item ? "DASH_CLOSE_SUCCESS" : "DASH_CLOSE_FAILED";
@@ -914,7 +914,7 @@ Item {
 
         function toggleReveal(selector: string, value: string): string {
             return withBarConfig(selector, value, false, bar => {
-                if (!bar.autoHide)
+                if (!bar.autoHide && !BarWidgetService.dankBarItems[bar.id]?.fullscreenAutoHide)
                     return "BAR_AUTO_HIDE_DISABLED";
                 if (!(bar.visible ?? true)) {
                     SettingsData.updateBarConfig(bar.id, {
@@ -1102,7 +1102,11 @@ Item {
         }
 
         function set(key: string, value: string): string {
-            if (!(key in SettingsData)) {
+            if (AdminPolicy.disableSettingsIpcSet)
+                return "SETTINGS_SET_DISABLED";
+            if (SettingsData.isManaged(key))
+                return "SETTINGS_SET_MANAGED";
+            if (!SettingsData.hasSetting(key)) {
                 log.warn("Cannot set property, not found:", key);
                 return "SETTINGS_INVALID_KEY";
             }
@@ -1137,8 +1141,8 @@ Item {
                 }
 
                 log.warn("Setting:", key, value);
-                SettingsData[key] = value;
-                SettingsData.saveSettings();
+                if (!SettingsData.set(key, value))
+                    throw `${value} is not a valid ${key}`;
                 return "SETTINGS_SET_SUCCESS";
             } catch (e) {
                 log.warn("Failed to set property:", key, "error:", e);

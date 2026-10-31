@@ -176,7 +176,6 @@ DevicePane {
                         anchors.right: parent.right
                         anchors.rightMargin: Theme.spacingS
                         topPadding: Theme.spacingXS
-                        isMonospace: false
                         text: Math.round(thread.usage) + "%"
                         font.pixelSize: Theme.fontSizeSmall
                         color: Theme.surfaceText

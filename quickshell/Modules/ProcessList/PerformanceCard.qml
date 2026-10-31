@@ -161,7 +161,6 @@ Rectangle {
         }
 
         NumericText {
-            isMonospace: false
             Layout.maximumWidth: card.width - Theme.spacingM * 2
             elide: Text.ElideRight
             text: card.value

@@ -8,6 +8,9 @@ var ISLAND_DEFAULTS = {
     islandPlacement: "edge",
     islandFreeSize: 48,
     islandFreeIcon: "blur_on",
+    islandFreeIconMode: "icon",
+    islandFreeIconPath: "",
+    islandFreeIconColor: "primary",
     islandFreeEdgeMargin: 2,
     islandFreeIdleDelay: 2500,
     islandFreeIdleOpacity: 0.45,
@@ -33,7 +36,9 @@ var ISLAND_DEFAULTS = {
     islandHoverCloseDelay: 150,
     islandPalette: "default",
     islandHighContrast: false,
+    islandDashTabs: false,
     islandMediaClockVisible: true,
+    islandMediaLyrics: false,
     islandMediaAutoSwitch: false,
     islandNotificationBadgeClearOnOpen: false,
     islandNotificationExpand: false,
@@ -97,6 +102,7 @@ var DEFAULTS = {
         reverseScrolling: false,
         dwlShowAllTags: false,
         workspaceActiveAppHighlightEnabled: false,
+        workspaceUnfocusedAppsFullOpacity: false,
         workspaceColorMode: "default",
         workspaceFocusedCustomColor: "#6750A4",
         workspaceOccupiedColorMode: "none",
@@ -126,7 +132,9 @@ var DEFAULTS = {
     clock: {
         clockCompactMode: false,
         clockDateOrder: "timeFirst",
-        clockNotificationBadge: false
+        clockNotificationBadge: false,
+        clockClickAction: "dash",
+        clockClickCommand: ""
     },
     music: {
         mediaStyle: "controls",

@@ -31,8 +31,9 @@ Item {
     property string requestedWindow: ""
     property bool freeMode: false
     property bool anchorSnaps: false
-    property real anchorX: 0
-    property real anchorY: 0
+    property point anchor
+    // Velocity the next applyTarget seeds the spring with; a released drag flings from it.
+    property var flingSeed: null
     property real freeMargin: 8
     // Measured from the band centre, not the band start.
     property real anchorAlong: 0
@@ -220,8 +221,8 @@ Item {
         }
         if (!root.freeMode)
             return target;
-        const x = root.clampFree(root.anchorX - target.width / 2, target.width, root.width);
-        const y = root.clampFree(root.anchorY - target.height / 2, target.height, root.height);
+        const x = root.clampFree(root.anchor.x - target.width / 2, target.width, root.width);
+        const y = root.clampFree(root.anchor.y - target.height / 2, target.height, root.height);
         return Object.assign({}, target, {
             "offsetAlong": root.isVertical ? y + target.height / 2 - root.height / 2 : x + target.width / 2 - root.width / 2,
             "offsetCross": root.isVertical ? x : y
@@ -238,7 +239,9 @@ Item {
             fadeCompactCross = root.descriptorCross(controller.compactTarget);
         if (motion.running)
             root.unionMotionStartBounds();
-        motion.setTarget(root.resolveTarget(controller.targetDescriptor), seedVelocity);
+        const seed = seedVelocity ?? root.flingSeed;
+        root.flingSeed = null;
+        motion.setTarget(root.resolveTarget(controller.targetDescriptor), seed);
         if (!motion.running)
             root.controller.releaseIdleVisuals();
     }
@@ -261,8 +264,7 @@ Item {
         root.applyTarget();
     }
 
-    onAnchorXChanged: root.syncAnchor()
-    onAnchorYChanged: root.syncAnchor()
+    onAnchorChanged: root.syncAnchor()
     onAnchorAlongChanged: root.syncAnchor()
     onAlongExtentChanged: root.syncAnchor()
     onBandAlongStartChanged: root.syncAnchor()
@@ -458,6 +460,8 @@ Item {
             wallpaperExpandedComponent: expandedWallpaperComponent
             weatherCompactComponent: compactWeatherComponent
             weatherExpandedComponent: expandedWeatherComponent
+            wellbeingCompactComponent: compactWellbeingComponent
+            wellbeingExpandedComponent: expandedWellbeingComponent
             systemCompactComponent: compactSystemComponent
             systemExpandedComponent: expandedSystemComponent
             notificationCompactComponent: compactNotificationComponent
@@ -623,6 +627,7 @@ Item {
 
         HomeExpanded {
             controller: root.controller
+            onWindowRequested: windowName => root.openAfterCollapse(windowName)
             resizeGeometry: root.resizeGeometry
         }
     }
@@ -641,6 +646,7 @@ Item {
 
         MediaExpanded {
             controller: root.controller
+            onWindowRequested: windowName => root.openAfterCollapse(windowName)
             resizeGeometry: root.resizeGeometry
         }
     }
@@ -730,6 +736,7 @@ Item {
 
         WallpaperExpanded {
             controller: root.controller
+            onWindowRequested: windowName => root.openAfterCollapse(windowName)
             resizeGeometry: root.resizeGeometry
             effectiveScreen: root.effectiveScreen
         }
@@ -751,6 +758,28 @@ Item {
 
         WeatherExpanded {
             controller: root.controller
+            onWindowRequested: windowName => root.openAfterCollapse(windowName)
+            resizeGeometry: root.resizeGeometry
+        }
+    }
+
+    Component {
+        id: compactWellbeingComponent
+
+        DestinationCompact {
+            controller: root.controller
+            activityId: "wellbeing"
+            iconName: "digital_wellbeing"
+            label: I18n.tr("Screen time", "dashboard card and settings card title, time spent in apps")
+        }
+    }
+
+    Component {
+        id: expandedWellbeingComponent
+
+        WellbeingExpanded {
+            controller: root.controller
+            onWindowRequested: windowName => root.openAfterCollapse(windowName)
             resizeGeometry: root.resizeGeometry
         }
     }
@@ -821,6 +850,7 @@ Item {
 
         NotificationCenterExpanded {
             controller: root.controller
+            onWindowRequested: windowName => root.openAfterCollapse(windowName)
             resizeGeometry: root.resizeGeometry
         }
     }

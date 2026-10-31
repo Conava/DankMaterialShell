@@ -13,6 +13,8 @@ MediaChromeBase {
 
     readonly property bool compact: width < Theme.smallBreakpoint || halfWidth < headerHeight + controls.implicitHeight
     readonly property real halfWidth: Math.max(0, (width - padding * 2 - Theme.spacingXL) / 2)
+    // Panes size from this, not the card body, which can lag at zero width and loop compact forever
+    readonly property real bodyWidth: Math.max(0, width - (padding + Theme.layerOutlineWidth) * 2)
     // !TODO: expose this variant? playerPaneOpen false gives art beside lyrics, or art alone with hover transport
     readonly property bool playerPane: root.player.playerPaneOpen
     readonly property bool controlsColumn: playerPane
@@ -40,7 +42,7 @@ MediaChromeBase {
 
         x: root.compact || !root.splitPanes ? (parent.width - width) / 2 : I18n.isRtl ? parent.width - width : 0
         y: root.compact && root.splitPanes ? 0 : (parent.height - height) / 2
-        width: root.compact ? parent.width : art.width
+        width: root.compact ? root.bodyWidth : art.width
         height: root.columnHeight
 
         Behavior on x {
@@ -73,7 +75,17 @@ MediaChromeBase {
             Rectangle {
                 id: viewTogglePill
 
-                readonly property bool keyboardFocused: viewToggle.activeFocus && (root.Window.activeFocusItem?.visualFocus ?? false)
+                // Tab can focus a segment while the group itself has none.
+                readonly property bool keyboardFocused: {
+                    const item = root.Window.activeFocusItem;
+                    if (!(item?.visualFocus ?? false))
+                        return false;
+                    for (let p = item; p; p = p.parent) {
+                        if (p === viewToggle)
+                            return true;
+                    }
+                    return false;
+                }
                 readonly property bool revealed: artHover.hovered || keyboardFocused
 
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -100,6 +112,7 @@ MediaChromeBase {
                 DButtonGroup {
                     id: viewToggle
 
+                    focusRingColor: MediaAccentService.focusRing
                     anchors.centerIn: parent
                     size: "small"
                     checkEnabled: false
@@ -207,7 +220,7 @@ MediaChromeBase {
 
         x: root.compact || I18n.isRtl ? 0 : artPane.width + Theme.spacingXL
         y: root.compact ? root.artworkSize + Theme.spacingXL : (parent.height - height) / 2
-        width: root.compact ? parent.width : parent.width - artPane.width - Theme.spacingXL
+        width: root.compact ? root.bodyWidth : root.bodyWidth - artPane.width - Theme.spacingXL
         height: root.compact ? root.paneHeight : root.columnHeight
         visible: root.splitPanes
 
@@ -217,7 +230,10 @@ MediaChromeBase {
             width: parent.width
             height: parent.height - controls.y
             active: root.lyricsColumn && root.player.live
-            onLoaded: item.forceActiveFocus(Qt.PopupFocusReason)
+            onLoaded: {
+                if (root.player.ownsFocus())
+                    item.forceActiveFocus(Qt.PopupFocusReason);
+            }
 
             sourceComponent: LyricsOverlay {
                 player: root.player
@@ -289,7 +305,7 @@ MediaChromeBase {
                         width: parent.width
                         text: [root.artist, root.album].filter(Boolean).join(" \u00b7 ") || "\u00a0"
                         color: Theme.onSurfaceVariant
-                        font.pixelSize: Theme.fontSizeSmall
+                        font.pixelSize: Theme.fontSizeMedium
                         horizontalAlignment: Text.AlignHCenter
                         active: root.scrolling
                         loop: true
@@ -345,7 +361,7 @@ MediaChromeBase {
                             anchors.verticalCenter: parent.verticalCenter
                             visible: root.hasSeekbar
                             text: Format.formatDuration(seekbar.value * (root.presentation?.length ?? 0))
-                            reserveText: duration.text.replace(/\d/g, "8")
+                            reserveText: duration.text
                         }
 
                         MediaSeekbar {
@@ -364,7 +380,6 @@ MediaChromeBase {
                             anchors.verticalCenter: parent.verticalCenter
                             visible: root.hasSeekbar
                             text: Format.formatDuration(root.presentation?.length ?? 0)
-                            reserveText: text.replace(/\d/g, "8")
                         }
                     }
                 }
@@ -396,6 +411,7 @@ MediaChromeBase {
 
                 DButton {
                     id: playerButton
+                    focusRingColor: MediaAccentService.focusRing
 
                     readonly property string panelId: "players"
 
@@ -414,8 +430,6 @@ MediaChromeBase {
     }
 
     component TimeLabel: NumericText {
-        width: Math.ceil(reservedWidth)
-        isMonospace: false
         color: Theme.onSurfaceVariant
         font.pixelSize: Theme.fontSizeSmall
         font.weight: Theme.fontWeightMedium

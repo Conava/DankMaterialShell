@@ -347,7 +347,7 @@ Popup {
                     id: groupCard
                     required property var modelData
                     width: menuColumn.width
-                    height: groupColumn.implicitHeight + Theme.spacingS * 2
+                    height: groupColumn.implicitHeight + ProcessListMetrics.menuPadding * 2
                     color: Theme.foregroundColor(Theme.chipSurfaceNested, Theme.isFloatingWindow(processContextMenu))
                     radius: Theme.windowRadius
                     border.color: Theme.outlineMedium
@@ -356,7 +356,7 @@ Popup {
                     Column {
                         id: groupColumn
                         anchors.fill: parent
-                        anchors.margins: Theme.spacingS
+                        anchors.margins: ProcessListMetrics.menuPadding
                         spacing: Theme.groupedListGap
 
                         Repeater {
@@ -368,12 +368,12 @@ Popup {
                                 readonly property var entry: modelData.entry
                                 readonly property int itemIndex: modelData.index
                                 width: groupColumn.width
-                                height: Theme.menuItemHeight
+                                height: ProcessListMetrics.menuRowHeight
 
                                 Rectangle {
                                     id: menuItem
                                     width: parent.width
-                                    height: Theme.menuItemHeight
+                                    height: ProcessListMetrics.menuRowHeight
                                     radius: Theme.cornerRadiusM
                                     color: {
                                         if (!row.entry.enabled)

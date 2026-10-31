@@ -11,7 +11,7 @@ import (
 	"github.com/godbus/dbus/v5"
 )
 
-func NewManager() (*Manager, error) {
+func NewManager(keepLockOnUnlock bool, lockPolicy LockPolicy) (*Manager, error) {
 	conn, err := dbus.SystemBus()
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to system bus: %w", err)
@@ -25,8 +25,11 @@ func NewManager() (*Manager, error) {
 		conn:     conn,
 		dirty:    make(chan struct{}, 1),
 		signals:  make(chan *dbus.Signal, 256),
+
+		keepLockOnUnlock: keepLockOnUnlock,
+		lockPolicy:       lockPolicy,
 	}
-	m.sleepInhibitorEnabled.Store(true)
+	m.applyLockPolicy()
 
 	if err := m.initialize(); err != nil {
 		return nil, err

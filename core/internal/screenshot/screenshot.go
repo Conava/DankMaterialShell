@@ -49,6 +49,31 @@ func (o *WaylandOutput) effectiveScale() float64 {
 	return scale
 }
 
+// Hyprland >= 0.57 (901881c9f) sends screencopy frames in logical orientation; wlroots and niri send the native framebuffer.
+// !TODO: drop the version fallback once every distro ships hyprland >= 0.57
+func FrameInLogicalOrientation(transform, outW, outH int32, frameW, frameH int) bool {
+	switch transform {
+	case TransformNormal:
+		return true
+	case Transform90, Transform270, TransformFlipped90, TransformFlipped270:
+		if outW != outH {
+			return frameW == int(outH) && frameH == int(outW)
+		}
+	}
+	return DetectCompositor() == CompositorHyprland && hyprlandVersionAtLeast(0, 57)
+}
+
+func (o *WaylandOutput) frameInLogicalOrientation(frameW, frameH int) bool {
+	return FrameInLogicalOrientation(o.transform, o.width, o.height, frameW, frameH)
+}
+
+func (o *WaylandOutput) untransformFrame(buf *ShmBuffer) (*ShmBuffer, error) {
+	if o.frameInLogicalOrientation(buf.Width, buf.Height) {
+		return buf, nil
+	}
+	return buf.ApplyTransform(InverseTransform(o.transform))
+}
+
 func (o *WaylandOutput) bounds() Region {
 	x, y, w, h := o.x, o.y, o.width, o.height
 	if DetectCompositor() == CompositorHyprland {
@@ -677,12 +702,7 @@ func (s *Screenshoter) captureWholeOutput(output *WaylandOutput) (*CaptureResult
 		result.YInverted = false
 	}
 
-	if output.transform == TransformNormal {
-		return result, nil
-	}
-
-	invTransform := InverseTransform(output.transform)
-	transformed, err := result.Buffer.ApplyTransform(invTransform)
+	transformed, err := output.untransformFrame(result.Buffer)
 	if err != nil {
 		result.Buffer.Close()
 		return nil, fmt.Errorf("apply transform: %w", err)

@@ -334,7 +334,16 @@ Singleton {
             }
         }
 
+        if (sameScales(displayScales, scales))
+            return;
         displayScales = scales;
+    }
+
+    function sameScales(a, b) {
+        const names = Object.keys(a);
+        if (names.length !== Object.keys(b).length)
+            return false;
+        return names.every(name => a[name] === b[name]);
     }
 
     function sortWindowsByLayout(windowList) {
@@ -453,13 +462,17 @@ Singleton {
         }
     }
 
-    function handleTouchpadToggled(data) {
-        // Each subscription starts with a snapshot; only later changes show the OSD.
-        const showOsd = _touchpadStateInitialized && touchpadEnabled !== data.on;
-        touchpadEnabled = data.on;
+    function updateTouchpadState(enabled, forceOsd) {
+        const showOsd = forceOsd || (_touchpadStateInitialized && touchpadEnabled !== enabled);
+        touchpadEnabled = enabled;
         _touchpadStateInitialized = true;
         if (showOsd)
             touchpadToggled();
+    }
+
+    function handleTouchpadToggled(data) {
+        // Each subscription starts with a snapshot; only later changes show the OSD.
+        updateTouchpadState(data.on, false);
     }
 
     function handleWorkspacesChanged(data) {
@@ -468,7 +481,7 @@ Singleton {
         for (const ws of data.workspaces) {
             const oldWs = root.workspaces[ws.id];
             newWorkspaces[ws.id] = ws;
-            if (oldWs && oldWs.active_window_id !== undefined) {
+            if (ws.active_window_id === undefined && oldWs && oldWs.active_window_id !== undefined) {
                 newWorkspaces[ws.id].active_window_id = oldWs.active_window_id;
             }
         }
@@ -573,13 +586,17 @@ Singleton {
     }
 
     function handleWorkspaceActiveWindowChanged(data) {
-        if (root.workspaces[data.workspace_id]) {
-            if (data.active_window_id !== null && data.active_window_id !== undefined)
+        const ws = root.workspaces[data.workspace_id];
+        if (ws) {
+            if (ws.is_focused && data.active_window_id !== null && data.active_window_id !== undefined)
                 lastFocusedWindowId = data.active_window_id;
             updateWorkspace(data.workspace_id, {
                 "active_window_id": data.active_window_id
             });
         }
+
+        if (!ws?.is_focused)
+            return;
 
         let changed = false;
         const updatedWindows = new Array(windows.length);
@@ -1910,6 +1927,14 @@ window-rule {
     }
 
     IpcHandler {
+        function showTouchpadOsd(enabled: bool): string {
+            if (!CompositorService.isNiri)
+                return "NIRI_NOT_AVAILABLE";
+
+            root.updateTouchpadState(enabled, true);
+            return "TOUCHPAD_OSD_SHOWN";
+        }
+
         function screenshot(): string {
             if (!CompositorService.isNiri) {
                 return "NIRI_NOT_AVAILABLE";

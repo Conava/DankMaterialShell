@@ -57,13 +57,15 @@ QtObject {
     property real anchorRate: 1
     property real positionWall: 0
     property var probe: null
+    property bool positionTrusted: true
+    property string clockBus: ""
     property var memo: null
 
     onTrackKeyChanged: {
         cancel();
         refreshPending = holdsSong();
         if (!refreshPending)
-            clear();
+            restart();
         requestedKey = "";
         if (enabled)
             resume();
@@ -90,7 +92,11 @@ QtObject {
         if (enabled && (state === "none" || state === "error"))
             useEmbeddedText(state);
     }
-    onPositionChanged: scheduleAnchor()
+    onPositionChanged: {
+        if (MprisController.refreshingPosition || flooredEcho())
+            return;
+        scheduleAnchor();
+    }
     onRateChanged: updatePlaybackClock()
     onPlayingChanged: {
         probe = null;
@@ -166,6 +172,19 @@ QtObject {
     function clear() {
         clearContent();
         state = "idle";
+    }
+
+    function restart() {
+        const switched = clockBus !== "" && clockBus === busName;
+        clockBus = busName;
+        clear();
+        positionTrusted = !switched;
+        if (!switched)
+            return;
+        anchorPosition = 0;
+        anchorWall = Date.now();
+        anchorPlaying = playing;
+        anchorRate = rate;
     }
 
     function clearContent() {
@@ -379,6 +398,8 @@ QtObject {
         if (!line || !Number.isFinite(line.t))
             return false;
         player.position = Math.max(0.1, Math.min(line.t, duration * 0.99));
+        positionTrusted = true;
+        reanchor();
         return true;
     }
 
@@ -391,7 +412,7 @@ QtObject {
     function updatePlaybackClock() {
         const predicted = currentTime();
         const sampled = position + (anchorPlaying ? (Date.now() - positionWall) * anchorRate / 1000 : 0);
-        const pendingSeek = !stopped && anchorUpdate.running && Math.abs(sampled - predicted) >= DashMetrics.mediaLyricsPositionTolerance;
+        const pendingSeek = !stopped && anchorUpdate.running && Math.abs(sampled - predicted) >= DashMetrics.mediaLyricsPositionTolerance && reachable(sampled);
         anchorUpdate.stop();
         anchorPosition = pendingSeek ? sampled : predicted;
         anchorWall = Date.now();
@@ -425,6 +446,7 @@ QtObject {
         const advanced = previous.position + (wall - previous.wall) * rate / 1000;
         if (Math.abs(observed - advanced) > DashMetrics.mediaLyricsPositionProbeDrift)
             return;
+        positionTrusted = true;
         if (Math.abs(observed - currentTime()) < DashMetrics.mediaLyricsPositionProbeThreshold)
             return;
         anchorPosition = observed;
@@ -434,15 +456,28 @@ QtObject {
         resync();
     }
 
+    // pear-desktop floors Position to whole seconds on pause, resume and track events.
+    function flooredEcho() {
+        const lead = currentTime() - position;
+        const whole = Math.abs(position - Math.round(position)) < DashMetrics.mediaLyricsWholeSecondSlack;
+        return whole && lead >= 0 && lead < 1 + DashMetrics.mediaLyricsPositionTolerance;
+    }
+
     function scheduleAnchor() {
         positionWall = Date.now();
         if (enabled && synced && !stopped && !anchorUpdate.running)
             anchorUpdate.start();
     }
 
+    // the Position Get quickshell issues on a track change can still answer with the old track (#4025)
+    function reachable(observed) {
+        return positionTrusted || observed <= currentTime() + DashMetrics.mediaLyricsTrackStartSlack;
+    }
+
     function reanchor(force = true) {
         anchorUpdate.stop();
-        const observed = player?.position ?? 0;
+        const sampled = player?.position ?? 0;
+        const observed = reachable(sampled) ? sampled : currentTime();
         if (!force && anchorPlaying && Math.abs(observed - currentTime()) < DashMetrics.mediaLyricsPositionTolerance)
             return false;
         anchorPosition = observed;
@@ -526,7 +561,7 @@ QtObject {
     }
 
     property Timer positionProbe: Timer {
-        interval: DashMetrics.mediaLyricsPositionProbeInterval
+        interval: root.positionTrusted ? DashMetrics.mediaLyricsPositionProbeInterval : DashMetrics.mediaLyricsPositionSettleInterval
         repeat: true
         triggeredOnStart: true
         running: root.enabled && root.synced && root.playing && !root.stopped && root.busName !== "" && DMSService.isConnected

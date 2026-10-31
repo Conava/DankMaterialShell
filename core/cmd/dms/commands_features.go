@@ -83,6 +83,10 @@ func runUpdate() {
 		log.Fatalf("Error detecting OS: %v", err)
 	}
 
+	if osInfo.Immutable {
+		log.Fatalf("%s is an image-based system (%s). dms lives in the read-only image; update it with 'dms system update' or your image tooling (rpm-ostree, bootc, transactional-update).", osInfo.PrettyName, osInfo.ImmutableReason)
+	}
+
 	config, exists := distros.Registry[osInfo.Distribution.ID]
 	if !exists {
 		log.Fatalf("Unsupported distribution: %s", osInfo.Distribution.ID)
@@ -124,16 +128,14 @@ func updateArchLinux() error {
 
 	var packageName string
 	var isAUR bool
-	if isArchPackageInstalled("dms-shell") {
-		packageName = "dms-shell"
-	} else if isArchPackageInstalled("dms-shell-git") {
-		packageName = "dms-shell-git"
+	// AUR name first: pacman -Q matches provides, and dux-shell-git provides dux-shell.
+	if isArchPackageInstalled("dux-shell-git") {
+		packageName = "dux-shell-git"
 		isAUR = true
-	} else if isArchPackageInstalled("dms-shell-bin") {
-		packageName = "dms-shell-bin"
-		isAUR = true
+	} else if isArchPackageInstalled("dux-shell") {
+		packageName = "dux-shell"
 	} else {
-		fmt.Println("Info: No dms-shell package found.")
+		fmt.Println("Info: No dux-shell package found.")
 		fmt.Println("Info: Falling back to git-based update method...")
 		return updateOtherDistros()
 	}

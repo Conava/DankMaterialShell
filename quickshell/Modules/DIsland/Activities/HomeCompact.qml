@@ -284,7 +284,7 @@ Item {
             return;
         SessionData.suppressOSDTemporarily();
         const next = Math.max(BrightnessService.brightnessMinimum(root.brightnessDevice), Math.min(root.brightnessMaximum, BrightnessService.brightnessLevel + direction * 5));
-        BrightnessService.setBrightness(next, root.brightnessDevice.id, true);
+        BrightnessService.setGroupBrightness(next, BrightnessService.lastIpcTargets(), true);
     }
 
     function connectivityIconName(type) {
@@ -631,7 +631,12 @@ Item {
                 spacing: Theme.spacingXXS
 
                 PrivacyIcon {
-                    name: "mic"
+                    // Same muted check as the bar's PrivacyIndicator
+                    name: {
+                        const sourceAudio = AudioService.source?.audio;
+                        const muted = !sourceAudio || sourceAudio.muted || sourceAudio.volume === 0.0;
+                        return muted ? "mic_off" : "mic";
+                    }
                     active: PrivacyService.microphoneActive
                 }
 

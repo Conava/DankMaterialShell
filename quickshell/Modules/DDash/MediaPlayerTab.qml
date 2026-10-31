@@ -123,7 +123,7 @@ Item {
         interval: DashMetrics.mediaPositionPollInterval
         running: root.live && root.activePlayer?.playbackState === MprisPlaybackState.Playing && !root.isSeeking
         repeat: true
-        onTriggered: root.activePlayer?.positionChanged()
+        onTriggered: MprisController.refreshPosition(root.activePlayer)
     }
 
     function syncAudioRef(wanted) {
@@ -172,6 +172,15 @@ Item {
     function restoreLyrics() {
         if (live && lyricsEnabled && CacheData.mediaLyricsOpen)
             lyricsOpen = true;
+    }
+
+    // A plain Item's activeFocus stays false while a child holds focus.
+    function ownsFocus() {
+        for (let item = Window.activeFocusItem; item; item = item.parent) {
+            if (item === root)
+                return true;
+        }
+        return false;
     }
 
     function toggleLyrics(opener) {

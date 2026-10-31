@@ -115,14 +115,12 @@ MediaChromeBase {
 
                 readonly property string durationText: (root.presentation?.length ?? 0) > 0 ? Format.formatDuration(root.presentation.length) : "--:--"
 
-                width: Math.ceil(reservedWidth)
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
                 text: Format.formatDuration(Math.max(0, Math.min(root.activePlayer?.position ?? 0, root.player.stableLength || Infinity))) + " / " + durationText
-                reserveText: (durationText + " / " + durationText).replace(/\d/g, "8")
-                isMonospace: false
+                reserveText: durationText + " / " + durationText
                 color: Theme.surfaceText
-                font.pixelSize: Theme.fontSizeLarge
+                font.pixelSize: Theme.fontSizeSmall
                 font.weight: Theme.fontWeightMedium
             }
         }
@@ -134,7 +132,10 @@ MediaChromeBase {
             anchors.bottom: seekBlock.visible ? seekBlock.top : parent.bottom
             anchors.bottomMargin: seekBlock.visible ? Theme.spacingM : 0
             active: root.player.lyricsOpen && root.player.live
-            onLoaded: item.forceActiveFocus(Qt.PopupFocusReason)
+            onLoaded: {
+                if (root.player.ownsFocus())
+                    item.forceActiveFocus(Qt.PopupFocusReason);
+            }
             sourceComponent: LyricsOverlay {
                 player: root.player
             }

@@ -223,7 +223,6 @@ Rectangle {
 
                 NumericText {
                     visible: root.drive?.temperature != null
-                    isMonospace: false
                     text: Devices.formatTemp(root.drive?.temperature ?? null, SettingsData.useFahrenheit)
                     font.pixelSize: Theme.fontSizeSmall
                     color: Theme.surfaceVariantText
@@ -363,7 +362,6 @@ Rectangle {
 
                     NumericText {
                         Layout.preferredWidth: Theme.fontSizeMedium * 12
-                        isMonospace: false
                         horizontalAlignment: Text.AlignRight
                         text: root.spaceText(fsRow.modelData)
                         font.pixelSize: Theme.fontSizeSmall

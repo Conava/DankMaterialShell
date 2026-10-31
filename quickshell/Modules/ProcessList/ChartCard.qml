@@ -138,7 +138,6 @@ Rectangle {
         }
 
         NumericText {
-            isMonospace: false
             visible: text !== ""
             text: legendItem.value
             font.pixelSize: Theme.fontSizeSmall

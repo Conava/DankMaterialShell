@@ -50,6 +50,16 @@ Item {
             "shown": SettingsData.osdCapsLockEnabled
         },
         {
+            "value": "numLock",
+            "label": I18n.tr("Num lock", "OSD toggle for the Num Lock indicator"),
+            "shown": SettingsData.osdNumLockEnabled
+        },
+        {
+            "value": "keyboardLayout",
+            "label": I18n.tr("Keyboard layout"),
+            "shown": SettingsData.osdKeyboardLayoutEnabled && KeyboardLayoutService.available
+        },
+        {
             "value": "touchpad",
             "label": I18n.tr("Touchpad"),
             "shown": SettingsData.osdTouchpadEnabled && CompositorService.isNiri
@@ -188,6 +198,21 @@ Item {
                 text: I18n.tr("Caps lock")
                 checked: SettingsData.osdCapsLockEnabled
                 onToggled: checked => SettingsData.set("osdCapsLockEnabled", checked)
+            }
+
+            SettingsToggleRow {
+                settingKey: "osdNumLockEnabled"
+                text: I18n.tr("Num lock", "OSD toggle for the Num Lock indicator")
+                checked: SettingsData.osdNumLockEnabled
+                onToggled: checked => SettingsData.set("osdNumLockEnabled", checked)
+            }
+
+            SettingsToggleRow {
+                settingKey: "osdKeyboardLayoutEnabled"
+                visible: KeyboardLayoutService.available
+                text: I18n.tr("Keyboard layout")
+                checked: SettingsData.osdKeyboardLayoutEnabled
+                onToggled: checked => SettingsData.set("osdKeyboardLayoutEnabled", checked)
             }
 
             SettingsToggleRow {

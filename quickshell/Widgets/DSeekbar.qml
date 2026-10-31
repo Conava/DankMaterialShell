@@ -83,8 +83,10 @@ Item {
     FocusRing {
         radius: Theme.cornerRadiusXS + Theme.focusRingOffset
         visible: root.activeFocus
+        border.color: root.focusRingColor
     }
     property color accentColor: Theme.primary
+    property color focusRingColor: Theme.focusRingColor
     property color accentTrackColor: Theme.withAlpha(accentColor, 0.28)
     property color accentSubtleColor: Theme.withAlpha(accentColor, 0.55)
 
@@ -227,7 +229,7 @@ Item {
                 isPlaying: activePlayer && activePlayer.playbackState === MprisPlaybackState.Playing
                 onFrameTicked: {
                     if (!root.isSeeking)
-                        activePlayer.positionChanged();
+                        MprisController.refreshPosition(activePlayer);
                 }
 
                 MouseArea {
