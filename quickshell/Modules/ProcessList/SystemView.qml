@@ -436,9 +436,9 @@ Item {
 
             StatRow {
                 required property int index
-                readonly property var row: rowsGroup.shown[index]
-                label: row.label
-                value: row.value
+                readonly property var row: rowsGroup.shown[index] ?? ({})
+                label: row.label ?? ""
+                value: row.value ?? ""
                 loading: row.loading === true
                 tooltip: row.tooltip ?? ""
             }
@@ -483,7 +483,7 @@ Item {
                 id: sensor
 
                 required property int index
-                readonly property var modelData: group.rows[index]
+                readonly property var modelData: group.rows[index] ?? ({})
 
                 height: Theme.iconButtonSize
 
@@ -492,7 +492,7 @@ Item {
                     anchors.right: bar.left
                     anchors.rightMargin: Theme.spacingM
                     anchors.verticalCenter: parent.verticalCenter
-                    text: sensor.modelData.name
+                    text: sensor.modelData.name ?? ""
                     font.pixelSize: Theme.fontSizeMedium
                     color: Theme.surfaceVariantText
                     wrapMode: Text.NoWrap
@@ -508,7 +508,7 @@ Item {
                     height: Theme.spacingS
                     radius: height / 2
                     color: Theme.surfaceContainerHighest
-                    opacity: sensor.modelData.ratio === null ? 0 : 1
+                    opacity: sensor.modelData.ratio == null ? 0 : 1
 
                     Rectangle {
                         width: parent.width * (sensor.modelData.ratio ?? 0)
@@ -523,7 +523,7 @@ Item {
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
                     width: Theme.iconButtonSize * 2
-                    text: sensor.modelData.value
+                    text: sensor.modelData.value ?? ""
                     font.pixelSize: Theme.fontSizeMedium
                     color: Theme.surfaceText
                     horizontalAlignment: Text.AlignRight

@@ -679,7 +679,7 @@ Singleton {
             return currentSort;
         case "gpu":
         case "vram":
-            return enabledModules.includes("process-gpu") && isModuleAvailable("process-gpu") ? currentSort : "";
+            return gpuPciIds.length > 0 && enabledModules.includes("process-gpu") && isModuleAvailable("process-gpu") ? currentSort : "";
         }
         return "";
     }

@@ -20,11 +20,17 @@ function has(v) {
 // powerOnTime carries a numeric string plus `unit` ("hours" | "days" | "years"); QML picks the "%1 days"-style string.
 function powerOnRow(hours) {
     if (hours < HOURS_AS_DAYS)
-        return Object.assign(row("powerOnTime", String(Math.round(hours))), { unit: "hours" });
+        return Object.assign(row("powerOnTime", String(Math.round(hours))), {
+            unit: "hours"
+        });
     const days = hours / 24;
     if (days < DAYS_AS_YEARS)
-        return Object.assign(row("powerOnTime", String(Math.round(days))), { unit: "days" });
-    return Object.assign(row("powerOnTime", (days / 365.25).toFixed(1)), { unit: "years" });
+        return Object.assign(row("powerOnTime", String(Math.round(days))), {
+            unit: "days"
+        });
+    return Object.assign(row("powerOnTime", (days / 365.25).toFixed(1)), {
+        unit: "years"
+    });
 }
 
 // Self-test value is "ok", "running" or "error"; null (no row) when the status is empty or unrecognized.
@@ -83,12 +89,20 @@ function healthLevel(drive) {
         return "";
     if (drive.ata && drive.ata.failing)
         return "failing";
-    return ({ ok: "healthy", warning: "warning", failing: "failing" })[drive.health] || "";
+    return ({
+            ok: "healthy",
+            warning: "warning",
+            failing: "failing"
+        })[drive.health] || "";
 }
 
 // "ok" | "warning" | "critical" label id for a healthLevel, or "" when there is none.
 function healthWord(level) {
-    return ({ healthy: "ok", warning: "warning", failing: "critical" })[level] || "";
+    return ({
+            healthy: "ok",
+            warning: "warning",
+            failing: "critical"
+        })[level] || "";
 }
 
 // Mount point closest to the root: "/" wins, otherwise the shortest path.
@@ -143,16 +157,16 @@ function partitionStrip(drive, mounts) {
     const room = 1 - n * MIN_STRIP_WEIGHT;
     const rest = sizes.reduce((s, v, i) => s + (clamped[i] ? 0 : v), 0);
     return parts.map((p, i) => ({
-        device: p.device,
-        weight: equal ? 1 / parts.length : clamped[i] ? MIN_STRIP_WEIGHT : room * sizes[i] / rest,
-        label: p.mountPoint || p.label || String(p.device || "").split("/").pop(),
-        mounted: !!p.mountPoint,
-        size: sizes[i],
-        swap: !!p.swap || p.fsType === "swap",
-        fsType: p.fsType || "",
-        encrypted: !!p.encrypted,
-        usedRatio: mountPercent(mounts, p.mountPoint)
-    }));
+                device: p.device,
+                weight: equal ? 1 / parts.length : clamped[i] ? MIN_STRIP_WEIGHT : room * sizes[i] / rest,
+                label: p.mountPoint || p.label || String(p.device || "").split("/").pop(),
+                mounted: !!p.mountPoint,
+                size: sizes[i],
+                swap: !!p.swap || p.fsType === "swap",
+                fsType: p.fsType || "",
+                encrypted: !!p.encrypted,
+                usedRatio: mountPercent(mounts, p.mountPoint)
+            }));
 }
 
 // Decimal units, the way drives are sold: 2000398934016 -> "2 TB".
@@ -188,9 +202,12 @@ function driveIcon(drive) {
     if (drive.removable)
         return "usb";
     switch (drive.kind) {
-    case "nvme": return "nvme";
-    case "ssd": return "hard_drive_2";
-    case "hdd": return "hard_disk";
+    case "nvme":
+        return "nvme";
+    case "ssd":
+        return "hard_drive_2";
+    case "hdd":
+        return "hard_disk";
     }
     return String(drive.name || "").startsWith("sr") ? "album" : "storage";
 }
@@ -235,15 +252,24 @@ function parseReport(jsonText) {
     try {
         j = JSON.parse(jsonText);
     } catch (e) {
-        return { sections: [], error: "Invalid smartctl output" };
+        return {
+            sections: [],
+            error: "Invalid smartctl output"
+        };
     }
     if (!j || typeof j !== "object" || Array.isArray(j))
-        return { sections: [], error: "Invalid smartctl output" };
+        return {
+            sections: [],
+            error: "Invalid smartctl output"
+        };
 
     const sections = [];
     const push = (id, rows) => {
         if (rows.length)
-            sections.push({ id: id, rows: rows });
+            sections.push({
+                id: id,
+                rows: rows
+            });
     };
 
     const nv = j.nvme_smart_health_information_log;
@@ -255,7 +281,9 @@ function parseReport(jsonText) {
         push("attributes", table.filter(t => t && has(t.name)).map(t => kv(t.name, t.value + " / " + t.worst + " / " + t.thresh + (t.raw && t.raw.string ? "  " + t.raw.string : ""))));
 
     const nvTests = j.nvme_self_test_log && j.nvme_self_test_log.table;
-    const ataTests = j.ata_smart_self_test_log && j.ata_smart_self_test_log.standard && j.ata_smart_self_test_log.standard.table;
+    // smartctl -x prints the extended (GP) logs in place of the standard ones when the drive has them.
+    const testLog = j.ata_smart_self_test_log;
+    const ataTests = testLog && (testLog.standard || testLog.extended)?.table;
     const str = o => o && (o.string || o.value);
     if (Array.isArray(nvTests))
         push("selftest", nvTests.map(t => kv(str(t.self_test_code), str(t.self_test_result) + (has(t.power_on_hours) ? " @ " + t.power_on_hours + " h" : ""))));
@@ -263,7 +291,8 @@ function parseReport(jsonText) {
         push("selftest", ataTests.map(t => kv(str(t.type), str(t.status) + (has(t.lifetime_hours) ? " @ " + t.lifetime_hours + " h" : ""))));
 
     const errors = [];
-    const ataErr = j.ata_smart_error_log && j.ata_smart_error_log.summary;
+    const errorLog = j.ata_smart_error_log;
+    const ataErr = errorLog && (errorLog.summary || errorLog.extended);
     if (ataErr && has(ataErr.count))
         errors.push(kv("count", ataErr.count));
     if (nv && has(nv.num_err_log_entries))
@@ -271,5 +300,8 @@ function parseReport(jsonText) {
     push("errors", errors);
 
     const msgs = ((j.smartctl && j.smartctl.messages) || []).filter(m => m && m.severity === "error").map(m => m.string);
-    return { sections: sections, error: msgs.join("\n") };
+    return {
+        sections: sections,
+        error: msgs.join("\n")
+    };
 }

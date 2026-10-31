@@ -139,7 +139,7 @@ DevicePane {
             spacing: Theme.spacingS
 
             Repeater {
-                model: DgopService.perCoreCpuUsage.length
+                model: root.perThread ? DgopService.perCoreCpuUsage.length : 0
 
                 Rectangle {
                     id: thread

@@ -42,10 +42,10 @@ Rectangle {
     readonly property var statRows: {
         const rows = [];
         const add = (label, value, tooltip) => rows.push({
-                    "label": label,
-                    "value": value,
-                    "tooltip": tooltip ?? ""
-                });
+                "label": label,
+                "value": value,
+                "tooltip": tooltip ?? ""
+            });
         if (!asleep && rates?.busy != null)
             add(I18n.tr("Busy", "share of time a disk is busy"), Math.round(rates.busy) + "%");
         if (!asleep && rates?.responseTime != null)
@@ -140,8 +140,6 @@ Rectangle {
     function warnTooltip() {
         return Drives.warnRows(drive).map(r => rowLabel(r.id) + ": " + rowValue(r)).join("\n");
     }
-
-
 
     ColumnLayout {
         id: body
@@ -293,10 +291,10 @@ Rectangle {
 
                     StatRow {
                         required property int index
-                        readonly property var row: root.statRows[index]
+                        readonly property var row: root.statRows[index] ?? ({})
                         height: Theme.buttonHeightXS
-                        label: row.label
-                        value: row.value
+                        label: row.label ?? ""
+                        value: row.value ?? ""
                         tooltip: row.tooltip ?? ""
                     }
                 }
@@ -316,7 +314,7 @@ Rectangle {
                     id: fsRow
 
                     required property int index
-                    readonly property var modelData: root.filesystems[index]
+                    readonly property var modelData: root.filesystems[index] ?? ({})
 
                     width: parent?.width ?? 0
                     height: Theme.buttonHeightS
@@ -330,7 +328,7 @@ Rectangle {
 
                     StyledText {
                         Layout.fillWidth: true
-                        text: fsRow.modelData.swap ? I18n.tr("Swap") : fsRow.modelData.label
+                        text: fsRow.modelData.swap ? I18n.tr("Swap") : fsRow.modelData.label ?? ""
                         font.pixelSize: Theme.fontSizeMedium
                         color: Theme.surfaceText
                         wrapMode: Text.NoWrap
@@ -339,7 +337,7 @@ Rectangle {
 
                     StyledText {
                         Layout.preferredWidth: Theme.fontSizeMedium * 7
-                        text: fsRow.modelData.fsType
+                        text: fsRow.modelData.fsType ?? ""
                         font.pixelSize: Theme.fontSizeSmall
                         color: Theme.surfaceVariantText
                         wrapMode: Text.NoWrap
@@ -351,7 +349,7 @@ Rectangle {
                         Layout.preferredHeight: Theme.spacingS
                         radius: height / 2
                         color: Theme.surfaceContainerHighest
-                        opacity: fsRow.modelData.usedRatio !== null ? 1 : 0
+                        opacity: fsRow.modelData.usedRatio != null ? 1 : 0
 
                         Rectangle {
                             width: parent.width * Math.min(1, fsRow.modelData.usedRatio ?? 0)
@@ -407,7 +405,6 @@ Rectangle {
                 enabled: !DgopService.unlocking
                 onClicked: DgopService.unlock()
             }
-
         }
 
         SmartReport {
