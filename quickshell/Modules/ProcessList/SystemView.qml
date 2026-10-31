@@ -29,6 +29,11 @@ Item {
         active: root.visible
     }
 
+    Ref {
+        service: TailscaleService
+        active: root.visible
+    }
+
     SystemFacts {
         id: facts
     }

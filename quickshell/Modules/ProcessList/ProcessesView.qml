@@ -30,8 +30,10 @@ Rectangle {
             selectionScroll.schedule();
     }
     onActiveChanged: {
-        if (active)
-            updateProcesses();
+        if (!active)
+            return;
+        reconcileSort();
+        updateProcesses();
     }
     onSearchTextChanged: refreshFilter()
 
@@ -486,7 +488,6 @@ Rectangle {
                         }
                     }
                 }
-
             }
 
             DListView {

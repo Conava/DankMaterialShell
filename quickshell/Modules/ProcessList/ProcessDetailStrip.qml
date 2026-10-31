@@ -10,7 +10,6 @@ import qs.Modules.Settings.Widgets
 import "ProcessColumns.js" as ProcessColumns
 import "Connections.js" as Remotes
 import "../../Common/Format.js" as Format
-import "../../Services/SysmonDevices.js" as Devices
 
 Rectangle {
     id: root
@@ -67,7 +66,8 @@ Rectangle {
         if (!started)
             return "";
         const s = Math.max(0, (Date.now() - started.getTime()) / 1000);
-        return s >= 86400 ? I18n.tr("%1 days").arg(Math.floor(s / 86400)) : s >= 3600 ? I18n.tr("%1 hours").arg(Math.floor(s / 3600)) : I18n.tr("%1 min").arg(Math.max(1, Math.floor(s / 60)));
+        const unit = s >= 86400 ? 86400 : s >= 3600 ? 3600 : 60;
+        return I18n.duration(Math.max(60, Math.floor(s / unit) * unit));
     }
     readonly property string parentChain: {
         const names = [];
@@ -93,8 +93,10 @@ Rectangle {
 
     function sandboxName(kind) {
         switch (kind) {
-        case "flatpak": return "Flatpak";
-        case "snap": return "Snap";
+        case "flatpak":
+            return "Flatpak";
+        case "snap":
+            return "Snap";
         }
         return I18n.tr("Container", "process runs in its own container namespace");
     }
@@ -125,9 +127,12 @@ Rectangle {
 
     function tabTitle(id) {
         switch (id) {
-        case "overview": return I18n.tr("Overview");
-        case "resources": return I18n.tr("Resources", "process detail tab: CPU, memory, disk and GPU use");
-        case "network": return I18n.tr("Network");
+        case "overview":
+            return I18n.tr("Overview");
+        case "resources":
+            return I18n.tr("Resources", "process detail tab: CPU, memory, disk and GPU use");
+        case "network":
+            return I18n.tr("Network");
         }
         return I18n.tr("Details", "process detail tab: less used information");
     }
@@ -137,10 +142,12 @@ Rectangle {
                     "label": c.name,
                     "value": c.service,
                     "tooltip": c.name !== c.host ? c.host : ""
-                })).concat(list.length > 5 ? [{
-                        "label": I18n.tr("+ %1 more").arg(list.length - 5),
-                        "value": " "
-                    }] : []);
+                })).concat(list.length > 5 ? [
+            {
+                "label": I18n.tr("+ %1 more").arg(list.length - 5),
+                "value": " "
+            }
+        ] : []);
     }
 
     function refreshDetail() {
@@ -362,7 +369,6 @@ Rectangle {
                     }
                 }
             }
-
         }
 
         Flow {
